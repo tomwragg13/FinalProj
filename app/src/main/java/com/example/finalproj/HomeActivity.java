@@ -5,12 +5,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import org.w3c.dom.Text;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -19,6 +17,9 @@ public class HomeActivity extends AppCompatActivity {
 
     TextView nameTag;
     TextView weightTag;
+
+    String name;
+    int weight;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,15 +40,23 @@ public class HomeActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        MainActivity.fetchUserName(storedEmail);
+        fetchUserData(storedEmail);
 
         nameTag = (TextView) findViewById(R.id.nameTag);
         weightTag = (TextView) findViewById(R.id.weightTag);
 
-        String name = MainActivity.getUser().getName();
-        int weight = MainActivity.getUser().getWeight();
         nameTag.setText(name);
         weightTag.setText(weight+ " Kg");
+    }
+
+    public void fetchUserData(String email){
+        ClientHandler client = new ClientHandler("fetchData " + email);
+        Log.d("app",client.getReturnMessage());
+        String[] messageData = client.getReturnMessage().split(" ", -1);
+        this.name = messageData[0];
+        try {
+            this.weight = Integer.parseInt(messageData[1]);
+        }catch (Exception ignored){}
     }
 
     @Override

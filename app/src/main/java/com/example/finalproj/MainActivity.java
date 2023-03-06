@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -30,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
 
     EditText confirmPasswordText;
 
-    String message;
+    //String message;
 
     String pattern = "^[a-zA-Z]{1,16}\\s*$";
 
@@ -65,19 +66,39 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed() {
     }
 
-    public static void fetchUserName(String email){
-        Client client = new Client();
-        client.execute("fetchData " + email);
+    public static void fetchUserData(String email){
+        ClientHandler client = new ClientHandler("fetchData " + email);
+        Log.d("app",client.getReturnMessage());
+        String[] messageData = client.getReturnMessage().split(" ", -1);
+        name = messageData[1];
+        try {            weight = Integer.parseInt(messageData[2]);
+        }catch (Exception ignored){}
     }
 
-    public static void fetchUserWeight(String email){
-        Client client = new Client();
-        client.execute("fetchWeight " + email);
+    public void manageErrors(String message){
+        String[] messageData = message.split(" ", -1);
+        if(Objects.equals(messageData[0], "userData")){
+            if(Objects.equals(messageData[1], "taken")){
+                emailWarning.setText("Email Address is Already In Use");
+                emailWarning.setTextColor(Color.RED);
+            }
+            if(Objects.equals(messageData[2], "false")){
+                emailWarning.setText("Please Enter a Valid Email Address");
+                emailWarning.setTextColor(Color.RED);
+            }
+            if(Objects.equals(messageData[2], "true") && Objects.equals(messageData[1], "free")){
+                emailWarning.setText("✓");
+                emailWarning.setTextColor(Color.GREEN);
+                Toast.makeText(getApplicationContext(),"Sign Up Successful.",Toast.LENGTH_SHORT).show();
+
+            }
+        }
     }
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         String savedEmail = null;
         try {
             FileInputStream inputStream = openFileInput("saveEmail.txt"); // replace "filename.txt" with the name of the file where you stored the word
@@ -109,11 +130,12 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
 
-        myThread = new Thread(new MyServerThread());
-        myThread.start();
+        //clientHandler client = new clientHandler("userData tom wraggd tomwragg13@gmail.com 3179Jgb215!");
+        //Log.d("app",client.getReturnMessage());
+        //fetchUserData(savedEmail);
 
         if(!Objects.equals(savedEmail, "")){
-            fetchUserName(savedEmail);
+            fetchUserData(savedEmail);
             this.user = new User(savedEmail, name, weight);
             setContentView(R.layout.activity_home);
             Intent myInt = new Intent(getApplicationContext(), HomeActivity.class);
@@ -137,7 +159,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
-
     class MyServerThread implements Runnable{
         Socket s;
 
@@ -153,16 +174,13 @@ public class MainActivity extends AppCompatActivity {
             try{
                 ss = new ServerSocket(7801);
                 while (true){
-                    s = ss.accept();
-                    isr = new InputStreamReader(s.getInputStream());
-                    br = new BufferedReader(isr);
-                    message = br.readLine();
+
 
 
                     h.post(new Runnable() {
                         @Override
                         public void run() {
-                            String[] messageData = message.split(" ", -1);
+                            String[] messageData = "message".split(" ", -1);
                             if(Objects.equals(messageData[0], "userData")){
                                 if(Objects.equals(messageData[1], "taken")){
                                     emailWarning.setText("Email Address is Already In Use");
@@ -183,7 +201,7 @@ public class MainActivity extends AppCompatActivity {
                                 if(Objects.equals(messageData[1], "pass")){
                                     Toast.makeText(getApplicationContext(),"Login Successful.",Toast.LENGTH_SHORT).show();
                                     String email = messageData[2];
-                                    fetchUserName(email);
+                                    fetchUserData(email);
                                     user = new User(email, name, weight);
 
                                     //setContentView(R.layout.activity_home);
@@ -271,8 +289,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         boolean passwordPass = false;
-            if((password.replaceAll("\\s", "").equals(""))||(confirmPassword.replaceAll("\\s", "").equals(""))){
-                passwordWarningText.setText("Enter and Confirm Passwords");
+        if((password.replaceAll("\\s", "").equals(""))||(confirmPassword.replaceAll("\\s", "").equals(""))){
+            passwordWarningText.setText("Enter and Confirm Passwords");
             passwordWarningText.setTextColor(Color.RED);
             passwordPass = false;
         }else{
@@ -300,8 +318,9 @@ public class MainActivity extends AppCompatActivity {
                     + " " + email.replaceAll("\\s","") + " " + Encrypt.encryptData(password.replaceAll("\\s",""));
             if(passwordPass && namePass && emailPass){
 
-                Client client = new Client();
-                client.execute(userDataMessage);
+                ClientHandler client = new ClientHandler(userDataMessage);
+                Log.d("app", client.getReturnMessage());
+                manageErrors(client.getReturnMessage());
 
             }
         }

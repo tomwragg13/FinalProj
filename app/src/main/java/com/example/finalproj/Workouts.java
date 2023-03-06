@@ -8,9 +8,7 @@ public class Workouts {
     int sets;
     double calories;
 
-    double bodyW = MainActivity.getUser().getWeight();
-
-    public Workouts(String name, int reps, int weight, int sets) {
+    public Workouts(String name, int reps, int weight, int sets, double bodyW) {
         this.name = name;
         this.reps = reps;
         this.weight = weight;

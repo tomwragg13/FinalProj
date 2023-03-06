@@ -6,22 +6,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -33,6 +25,11 @@ public class LoginActivity extends AppCompatActivity {
     TextView confirmRemember;
 
     boolean toggle = false;
+
+    static String name;
+    static int weight;
+
+    User user;
 
 
 
@@ -63,14 +60,42 @@ public class LoginActivity extends AppCompatActivity {
         overridePendingTransition(0,0);
     }
 
+    private void handeLogin(String returnMessage) {
+        String[] messageData = returnMessage.split(" ", -1);
+        if(Objects.equals(messageData[0], "loginInfo")){
+            if(Objects.equals(messageData[1], "pass")){
+                Toast.makeText(getApplicationContext(),"Login Successful.",Toast.LENGTH_SHORT).show();
+                String email = messageData[2];
+                //fetchUserData(email);
+                //user = new User(email, name, weight);
+
+                //setContentView(R.layout.activity_home);
+                Intent myInt = new Intent(getApplicationContext(), HomeActivity.class);
+                startActivity(myInt);
+                overridePendingTransition(0,0);
+
+            }else{
+                //Toast.makeText(getApplicationContext(),"set false",Toast.LENGTH_SHORT).show();
+                LoginActivity.setError();
+                //loginErrorText.setText("Email or Password is Incorrect");
+                //loginErrorText.setTextColor(Color.RED);
+
+            }
+
+        }
+    }
 
     public void signInButton(View view) throws InterruptedException {
         String email = (emailLogin.getText().toString());
         String password = (passwordLogin.getText().toString());
         password = Encrypt.encryptData(password);
         String message = "loginInfo " + email + " " + password;
-        Client client = new Client();
-        client.execute(message);
+        //Client client = new Client();
+        //client.execute(message);
+
+        ClientHandler client = new ClientHandler(message);
+        Log.d("app", client.getReturnMessage());
+        handeLogin(client.getReturnMessage());
         //save email for remember me
         if(toggle){
             try {
