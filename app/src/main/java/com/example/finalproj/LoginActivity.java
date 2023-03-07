@@ -66,22 +66,26 @@ public class LoginActivity extends AppCompatActivity {
             if(Objects.equals(messageData[1], "pass")){
                 Toast.makeText(getApplicationContext(),"Login Successful.",Toast.LENGTH_SHORT).show();
                 String email = messageData[2];
-                //fetchUserData(email);
-                //user = new User(email, name, weight);
 
-                //setContentView(R.layout.activity_home);
+                String password = (passwordLogin.getText().toString());
+                password = Encrypt.encryptData(password);
+
+                if(toggle){
+                    savedData.writeSavedEmail(getApplicationContext(), emailLogin.getText().toString().getBytes());
+                }else{
+                    savedData.writeSavedEmail(getApplicationContext(), "".getBytes());
+                }
+
+                savedData.writeStoredEmail(getApplicationContext(),emailLogin.getText().toString().getBytes());
+                savedData.writeNameWeight(getApplicationContext(), emailLogin.getText().toString().getBytes());
+
                 Intent myInt = new Intent(getApplicationContext(), HomeActivity.class);
                 startActivity(myInt);
                 overridePendingTransition(0,0);
 
             }else{
-                //Toast.makeText(getApplicationContext(),"set false",Toast.LENGTH_SHORT).show();
                 LoginActivity.setError();
-                //loginErrorText.setText("Email or Password is Incorrect");
-                //loginErrorText.setTextColor(Color.RED);
-
             }
-
         }
     }
 
@@ -89,40 +93,12 @@ public class LoginActivity extends AppCompatActivity {
         String email = (emailLogin.getText().toString());
         String password = (passwordLogin.getText().toString());
         password = Encrypt.encryptData(password);
+
         String message = "loginInfo " + email + " " + password;
-        //Client client = new Client();
-        //client.execute(message);
 
         ClientHandler client = new ClientHandler(message);
         Log.d("app", client.getReturnMessage());
         handeLogin(client.getReturnMessage());
-        //save email for remember me
-        if(toggle){
-            try {
-                FileOutputStream outputStream = openFileOutput("saveEmail.txt", Context.MODE_PRIVATE);
-                outputStream.write(emailLogin.getText().toString().getBytes());
-                outputStream.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }else{
-            try {
-                FileOutputStream outputStream = openFileOutput("saveEmail.txt", Context.MODE_PRIVATE);
-                outputStream.write("".getBytes());
-                outputStream.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        //save email for email storage
-        try {
-            FileOutputStream outputStream = openFileOutput("Email.txt", Context.MODE_PRIVATE);
-            outputStream.write(emailLogin.getText().toString().getBytes());
-            outputStream.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
     }
 

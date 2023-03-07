@@ -5,19 +5,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -70,8 +63,9 @@ public class MainActivity extends AppCompatActivity {
         ClientHandler client = new ClientHandler("fetchData " + email);
         Log.d("app",client.getReturnMessage());
         String[] messageData = client.getReturnMessage().split(" ", -1);
-        name = messageData[1];
-        try {            weight = Integer.parseInt(messageData[2]);
+        name = messageData[0];
+        try {
+            weight = Integer.parseInt(messageData[1]);
         }catch (Exception ignored){}
     }
 
@@ -99,40 +93,22 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        String savedEmail = null;
-        try {
-            FileInputStream inputStream = openFileInput("saveEmail.txt"); // replace "filename.txt" with the name of the file where you stored the word
-            int length = inputStream.available();
-            byte[] buffer = new byte[length];
-            inputStream.read(buffer);
-            savedEmail = new String(buffer);
-            inputStream.close();
-
-            // do something with the word, for example, log it
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        String storedEmail = null;
-        try {
-            FileInputStream inputStream = openFileInput("Email.txt"); // replace "filename.txt" with the name of the file where you stored the word
-            int length = inputStream.available();
-            byte[] buffer = new byte[length];
-            inputStream.read(buffer);
-            storedEmail = new String(buffer);
-            inputStream.close();
-
-            // do something with the word, for example, log it
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        //Toast.makeText(getApplicationContext(),storedEmail,Toast.LENGTH_SHORT).show();
+        String savedEmail = new savedData(getApplicationContext()).readSavedEmail();
+        String storedEmail = new savedData(getApplicationContext()).readStoredEmail();
 
         super.onCreate(savedInstanceState);
 
-        //clientHandler client = new clientHandler("userData tom wraggd tomwragg13@gmail.com 3179Jgb215!");
-        //Log.d("app",client.getReturnMessage());
-        //fetchUserData(savedEmail);
+        ClientHandler client = new ClientHandler("userData tom5 tom6 " + savedEmail + " pass 10");
+        String isTaken = client.getReturnMessage();
+        String[] isTakenData = isTaken.split(" ", -1);
+        String storedOldEmail = isTakenData[1];
+
+        if(Objects.equals(storedOldEmail, "free")){
+            savedEmail = "";
+            Log.d("app", "free");
+        }else{
+            Log.d("app", "taken");
+        }
 
         if(!Objects.equals(savedEmail, "")){
             fetchUserData(savedEmail);
@@ -142,8 +118,6 @@ public class MainActivity extends AppCompatActivity {
             startActivity(myInt);
             overridePendingTransition(0,0);
 
-        }else{
-            this.user = new User("null", "null", 10);
         }
         setContentView(R.layout.activity_main);
         firstNameText = (EditText) findViewById(R.id.createFirstName);
@@ -153,92 +127,6 @@ public class MainActivity extends AppCompatActivity {
         confirmPasswordText = (EditText) findViewById(R.id.createConfirmPassword);
         nameErrorText = (TextView) findViewById(R.id.nameErrorText);
         emailWarning = (TextView) findViewById(R.id.emailWarning);
-
-
-
-
-
-    }
-    class MyServerThread implements Runnable{
-        Socket s;
-
-        ServerSocket ss;
-        InputStreamReader isr;
-        BufferedReader br;
-        Handler h = new Handler();
-
-
-
-        @Override
-        public void run(){
-            try{
-                ss = new ServerSocket(7801);
-                while (true){
-
-
-
-                    h.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            String[] messageData = "message".split(" ", -1);
-                            if(Objects.equals(messageData[0], "userData")){
-                                if(Objects.equals(messageData[1], "taken")){
-                                    emailWarning.setText("Email Address is Already In Use");
-                                    emailWarning.setTextColor(Color.RED);
-                                }
-                                if(Objects.equals(messageData[2], "false")){
-                                    emailWarning.setText("Please Enter a Valid Email Address");
-                                    emailWarning.setTextColor(Color.RED);
-                                }
-                                if(Objects.equals(messageData[2], "true") && Objects.equals(messageData[1], "free")){
-                                    emailWarning.setText("✓");
-                                    emailWarning.setTextColor(Color.GREEN);
-                                    Toast.makeText(getApplicationContext(),"Sign Up Successful.",Toast.LENGTH_SHORT).show();
-
-                                }
-                            }
-                            if(Objects.equals(messageData[0], "loginInfo")){
-                                if(Objects.equals(messageData[1], "pass")){
-                                    Toast.makeText(getApplicationContext(),"Login Successful.",Toast.LENGTH_SHORT).show();
-                                    String email = messageData[2];
-                                    fetchUserData(email);
-                                    user = new User(email, name, weight);
-
-                                    //setContentView(R.layout.activity_home);
-                                    Intent myInt = new Intent(getApplicationContext(), HomeActivity.class);
-                                    startActivity(myInt);
-                                    overridePendingTransition(0,0);
-
-                                }else{
-                                    //Toast.makeText(getApplicationContext(),"set false",Toast.LENGTH_SHORT).show();
-                                    LoginActivity.setError();
-                                    //loginErrorText.setText("Email or Password is Incorrect");
-                                    //loginErrorText.setTextColor(Color.RED);
-
-                                }
-
-                            }
-                            if(Objects.equals(messageData[0], "fetchData")){
-                                name = messageData[1];
-                                try{
-                                    weight = Integer.parseInt(messageData[2]);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                    weight = 1;
-                                }
-
-                                //Toast.makeText(getApplicationContext(),name + weight1,Toast.LENGTH_SHORT).show();
-                                user.setName(name);
-                                user.setWeight(weight);
-                            }
-                        }
-                    });
-
-                }
-            }catch (IOException e){
-                e.printStackTrace();
-            }
-        }
     }
 
     public static boolean validate(String emailStr) {
@@ -246,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
         return matcher.find();
     }
 
-    public void swapToSignin(View view){
+    public void swapToSignIn(View view){
         Intent myInt = new Intent(getApplicationContext(), LoginActivity.class);
         startActivity(myInt);
         overridePendingTransition(0,0);
@@ -255,8 +143,6 @@ public class MainActivity extends AppCompatActivity {
     public void checkSignup(View view) {
         TextView buttonText = (TextView) findViewById(R.id.textView);
         TextView passwordWarningText = (TextView) findViewById(R.id.passwordWarningText);
-        //buttonText.setText("Button Pressed");
-
 
         String firstName = (firstNameText.getText().toString());
         String secondName = (secondNameText.getText().toString());

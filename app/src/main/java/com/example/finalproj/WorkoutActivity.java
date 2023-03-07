@@ -19,42 +19,17 @@ public class WorkoutActivity extends AppCompatActivity {
 
     RecyclerView recyclerView;
     List<Workouts> workouts;
-
     EditText enterName, enterReps, enterWeight, enterSets;
-
     MyAdapter adapter;
+    String email;
     String name;
     int weight;
 
-
-    public void fetchUserData(String email){
-        ClientHandler client = new ClientHandler("fetchData " + email);
-        Log.d("app",client.getReturnMessage());
-        String[] messageData = client.getReturnMessage().split(" ", -1);
-        this.name = messageData[0];
-        try {
-            this.weight = Integer.parseInt(messageData[1]);
-        }catch (Exception ignored){}
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        String storedEmail = null;
-        try {
-            FileInputStream inputStream = openFileInput("Email.txt"); // replace "filename.txt" with the name of the file where you stored the word
-            int length = inputStream.available();
-            byte[] buffer = new byte[length];
-            inputStream.read(buffer);
-            storedEmail = new String(buffer);
-            inputStream.close();
-
-            // do something with the word, for example, log it
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        fetchUserData(storedEmail);
-
+        email = new savedData(getApplicationContext()).readStoredEmail();
+        name = new savedData(getApplicationContext()).readStoredName();
+        weight = Integer.parseInt(new savedData(getApplicationContext()).readStoredWeight());
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_workout);
@@ -70,15 +45,8 @@ public class WorkoutActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-
         adapter = new MyAdapter(getApplicationContext(), workouts);
         recyclerView.setAdapter(adapter);
-
-        String email = MainActivity.getUser().getEmail();
-        String name = MainActivity.getUser().getName();
-        int weight = MainActivity.getUser().getWeight();
-        Toast.makeText(getApplicationContext(),email + " " + name + " " + weight,Toast.LENGTH_SHORT).show();
-
     }
 
     @Override
@@ -100,9 +68,7 @@ public class WorkoutActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-
         adapter = new MyAdapter(getApplicationContext(), workouts);
         recyclerView.setAdapter(adapter);
     }
-
 }
