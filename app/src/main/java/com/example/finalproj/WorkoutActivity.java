@@ -41,6 +41,7 @@ public class WorkoutActivity extends AppCompatActivity {
 
         workouts = new ArrayList<Workouts>();
         workouts.add(new Workouts("Bench Press", 8, 45, 4, weight));
+        workouts.add(new Workouts("Bicep Curl", 8, 10, 4, weight));
 
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));

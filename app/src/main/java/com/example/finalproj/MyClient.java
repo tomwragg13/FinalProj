@@ -19,7 +19,7 @@ class MyClient implements Runnable{
 
 
     public MyClient(String toSend) {
-        this.server = "192.168.108.203";
+        this.server = "192.168.0.104";
         this.port = 9777;
         this.toSend = toSend;
     }

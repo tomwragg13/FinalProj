@@ -59,16 +59,6 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed() {
     }
 
-    public static void fetchUserData(String email){
-        ClientHandler client = new ClientHandler("fetchData " + email);
-        Log.d("app",client.getReturnMessage());
-        String[] messageData = client.getReturnMessage().split(" ", -1);
-        name = messageData[0];
-        try {
-            weight = Integer.parseInt(messageData[1]);
-        }catch (Exception ignored){}
-    }
-
     public void manageErrors(String message){
         String[] messageData = message.split(" ", -1);
         if(Objects.equals(messageData[0], "userData")){
@@ -88,13 +78,10 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         String savedEmail = new savedData(getApplicationContext()).readSavedEmail();
-        String storedEmail = new savedData(getApplicationContext()).readStoredEmail();
 
         super.onCreate(savedInstanceState);
 
@@ -111,8 +98,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if(!Objects.equals(savedEmail, "")){
-            fetchUserData(savedEmail);
-            this.user = new User(savedEmail, name, weight);
             setContentView(R.layout.activity_home);
             Intent myInt = new Intent(getApplicationContext(), HomeActivity.class);
             startActivity(myInt);
