@@ -61,7 +61,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void handeLogin(String returnMessage) {
-        String[] messageData = returnMessage.split(" ", -1);
+        String[] messageData = returnMessage.split(",", -1);
         if(Objects.equals(messageData[0], "loginInfo")){
             if(Objects.equals(messageData[1], "pass")){
                 Toast.makeText(getApplicationContext(),"Login Successful.",Toast.LENGTH_SHORT).show();
@@ -94,7 +94,7 @@ public class LoginActivity extends AppCompatActivity {
         String password = (passwordLogin.getText().toString());
         password = Encrypt.encryptData(password);
 
-        String message = "loginInfo " + email + " " + password;
+        String message = "loginInfo," + email + "," + password;
 
         ClientHandler client = new ClientHandler(message);
         Log.d("app", client.getReturnMessage());

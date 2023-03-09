@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void manageErrors(String message){
-        String[] messageData = message.split(" ", -1);
+        String[] messageData = message.split(",", -1);
         if(Objects.equals(messageData[0], "userData")){
             if(Objects.equals(messageData[1], "taken")){
                 emailWarning.setText("Email Address is Already In Use");
@@ -85,9 +85,9 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
 
-        ClientHandler client = new ClientHandler("userData tom5 tom6 " + savedEmail + " pass 10");
+        ClientHandler client = new ClientHandler("userData,tom5,tom6," + savedEmail + ",pass,10");
         String isTaken = client.getReturnMessage();
-        String[] isTakenData = isTaken.split(" ", -1);
+        String[] isTakenData = isTaken.split(",", -1);
         String storedOldEmail = isTakenData[1];
 
         if(Objects.equals(storedOldEmail, "free")){
@@ -185,8 +185,8 @@ public class MainActivity extends AppCompatActivity {
         }else{
             buttonText.setText("✓");
             buttonText.setTextColor(Color.GREEN);
-            String userDataMessage = "userData " + firstName.replaceAll("\\s","") + " " + secondName.replaceAll("\\s","")
-                    + " " + email.replaceAll("\\s","") + " " + Encrypt.encryptData(password.replaceAll("\\s",""));
+            String userDataMessage = "userData," + firstName.replaceAll("\\s","") + "," + secondName.replaceAll("\\s","")
+                    + "," + email.replaceAll("\\s","") + "," + Encrypt.encryptData(password.replaceAll("\\s",""));
             if(passwordPass && namePass && emailPass){
 
                 ClientHandler client = new ClientHandler(userDataMessage);

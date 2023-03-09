@@ -11,10 +11,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.io.FileInputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -28,7 +27,7 @@ public class WorkoutActivity extends AppCompatActivity {
     String email;
     String name;
     int weight;
-    SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
+
     String date;
     TextView dateText;
 
@@ -48,16 +47,37 @@ public class WorkoutActivity extends AppCompatActivity {
         dateText = (TextView) findViewById(R.id.dateID);
 
 
+        SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
         date = sdf.format(new Date());
-        getDate("null");
+        date = DateHandler.getDate("null", date)[0];
+        dateText.setText(DateHandler.getDate("null", date)[1]);
+
+        loadWorkouts();
+
+
+    }
+
+    private void loadWorkouts(){
         workouts = new ArrayList<Workouts>();
-        workouts.add(new Workouts("Bench Press", 8, 45, 4, weight));
-        workouts.add(new Workouts("Bicep Curl", 8, 10, 4, weight));
+
+        ClientHandler client = new ClientHandler("workoutRead," + email + "," + date);
+        String[] messageData = client.getReturnMessage().split(",", -1);
+        Log.d("ret", client.getReturnMessage());
+
+        ArrayList<String> strList = new ArrayList<String>(
+                Arrays.asList(messageData));
+        strList.remove(0);
+
+        int items = strList.size()/5;
+        Log.d("items", strList.get(0));
+        for (int i = 0; i < items; i++) {
+            workouts.add(new Workouts(strList.get(5 * i), Integer.parseInt(strList.get(3+(5*i))), Integer.parseInt(strList.get(1+(5*i))), Integer.parseInt(strList.get(2+(5*i))), Double.parseDouble(strList.get(4+(5*i))), date));
+        }
 
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        adapter = new MyAdapter(getApplicationContext(), workouts);
+        adapter = new MyAdapter(getApplicationContext(), workouts, email, date);
         recyclerView.setAdapter(adapter);
     }
 
@@ -74,126 +94,34 @@ public class WorkoutActivity extends AppCompatActivity {
         overridePendingTransition(0,R.anim.slide_out_right);
     }
 
-    public String getDate(String direction){
-
-        int day = Integer.parseInt(date.substring(0,2));
-        int month = Integer.parseInt(date.substring(2,4));
-        int year = Integer.parseInt(date.substring(4,8));
-
-        boolean addMonth = false;
-
-        if(Objects.equals(direction, "next")){
-            day += 1;
-            if(addMonth == false){
-                if(month == 1 || month == 3 ||month == 5 || month == 7 || month == 8 || month == 10 || month == 12){
-                    addMonth = true;
-                    if(day == 32){
-                        month+= 1;
-                        day = 1;
-                    }
-                }
-            }
-            if(addMonth == false){
-                if(month == 4 || month == 6 || month == 9 || month == 11){
-                    addMonth = true;
-                    if(day == 31){
-                        month +=1;
-                        day = 1;
-                    }
-                }
-            }
-            if(addMonth == false){
-                if(month == 2){
-                    addMonth = true;
-                    if(day == 29){
-                        month +=1;
-                        day = 1;
-                    }
-                }
-            }
-
-            if(month == 13){
-                year +=1;
-                day = 1;
-                month = 1;
-            }
-        }
-        if(Objects.equals(direction, "back")){
-            day -= 1;
-            if(addMonth == false){
-                if(month == 1 || month == 2 || month == 4 || month == 6 || month == 8 || month == 9 || month == 11){
-                    addMonth = true;
-                    if(day == 0){
-                        month -= 1;
-                        day = 31;
-                    }
-                }
-            }
-            if(addMonth == false){
-                if(month == 5 || month == 7 || month == 10 || month == 12){
-                    addMonth = true;
-                    if(day == 0){
-                        month -= 1;
-                        day = 30;
-                    }
-                }
-            }
-            if(addMonth == false){
-                addMonth = true;
-                if(month == 3){
-                    if(day == 0){
-                        month -= 1;
-                        day = 28;
-                    }
-                }
-            }
-
-            if(month == 0){
-                year -=1;
-                day = 31;
-                month = 12;
-            }
-        }
-
-
-        String dayS = String.valueOf(day);
-        String monthS = String.valueOf(month);
-        if(String.valueOf(day).length() == 1){
-            dayS = String.valueOf(0) + dayS;
-        }
-        if(String.valueOf(month).length() == 1){
-            monthS = String.valueOf(0) + monthS;
-        }
-
-        date = dayS + monthS + String.valueOf(year);
-        dateText.setText(dayS + "/" + monthS + "/" + String.valueOf(year));
-
-        Log.d("date", String.valueOf(day) + String.valueOf(month) + String.valueOf(year));
-
-
-
-        return null;
-    }
 
     public void addWorkout(View view){
-        workouts.add(0,new Workouts(enterName.getText().toString(), Integer.parseInt(enterReps.getText().toString()), Integer.parseInt(enterWeight.getText().toString()), Integer.parseInt(enterSets.getText().toString()), weight));
+
+        workouts.add(0,new Workouts(enterName.getText().toString(), Integer.parseInt(enterReps.getText().toString()), Integer.parseInt(enterWeight.getText().toString()), Integer.parseInt(enterSets.getText().toString()), weight, date));
+        savedData.saveChanges(email, date, workouts);
         adapter.notifyItemInserted(0);
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        adapter = new MyAdapter(getApplicationContext(), workouts);
+        adapter = new MyAdapter(getApplicationContext(), workouts, email, date);
         recyclerView.setAdapter(adapter);
 
+        loadWorkouts();
 
-        //ClientHandler client = new ClientHandler("userData tom5 tom6 " + savedEmail + " pass 10");
-        //client.getReturnMessage();
+
     }
 
     public void nextButton(View view){
-        getDate( "next");
+        String[] dateData = DateHandler.getDate( "next", date);
+        date = dateData[0];
+        dateText.setText(dateData[1]);
+        loadWorkouts();
     }
 
     public void backButton(View view){
-        getDate( "back");
+        String[] dateData = DateHandler.getDate( "back", date);
+        date = dateData[0];
+        dateText.setText(dateData[1]);
+        loadWorkouts();
     }
 }

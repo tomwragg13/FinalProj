@@ -8,12 +8,18 @@ public class Workouts {
     int sets;
     double calories;
 
-    public Workouts(String name, int reps, int weight, int sets, double bodyW) {
+    double bodyW;
+
+    String date;
+
+    public Workouts(String name, int reps, int weight, int sets, double bodyW, String date) {
         this.name = name;
         this.reps = reps;
         this.weight = weight;
         this.sets = sets;
         this.calories = (weight/bodyW)*0.75*reps*sets;
+        this.bodyW = bodyW;
+        this.date = date;
     }
 
     public String getName() {
@@ -30,6 +36,10 @@ public class Workouts {
 
     public int getReps() {
         return reps;
+    }
+
+    public double getBodyW() {
+        return bodyW;
     }
 
     public void setReps(int reps) {
@@ -50,5 +60,9 @@ public class Workouts {
 
     public void setSets(int sets) {
         this.sets = sets;
+    }
+
+    public String getDate() {
+        return date;
     }
 }
