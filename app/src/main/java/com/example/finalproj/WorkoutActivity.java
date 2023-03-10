@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -29,7 +30,8 @@ public class WorkoutActivity extends AppCompatActivity {
     int weight;
 
     String date;
-    TextView dateText;
+    TextView dateText, nameText, weightText;
+    ScrollView scrollView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +47,12 @@ public class WorkoutActivity extends AppCompatActivity {
         enterWeight = (EditText) findViewById(R.id.workoutWeight);
         enterSets = (EditText) findViewById(R.id.workoutSets);
         dateText = (TextView) findViewById(R.id.dateID);
+        nameText = (TextView) findViewById(R.id.workoutNameTag);
+        weightText = (TextView) findViewById(R.id.workoutWeightTag);
+        scrollView = (ScrollView) findViewById(R.id.scroller);
 
+        nameText.setText(name);
+        weightText.setText(String.valueOf(weight + " Kg"));
 
         SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
         date = sdf.format(new Date());
@@ -53,6 +60,13 @@ public class WorkoutActivity extends AppCompatActivity {
         dateText.setText(DateHandler.getDate("null", date)[1]);
 
         loadWorkouts();
+
+        final float scale = getApplicationContext().getResources().getDisplayMetrics().density;
+        int pixels = (int) (75 * scale + 0.5f);
+        int imgPixels = (int) (32 * scale + 0.5f);
+        Log.d("pix", String.valueOf(imgPixels-pixels));
+        recyclerView.getLayoutParams().height = workouts.size()*pixels;
+        Log.d("d", String.valueOf(scrollView.getChildAt(0).getHeight()));
 
 
     }
@@ -69,10 +83,14 @@ public class WorkoutActivity extends AppCompatActivity {
         strList.remove(0);
 
         int items = strList.size()/5;
-        Log.d("items", strList.get(0));
-        for (int i = 0; i < items; i++) {
-            workouts.add(new Workouts(strList.get(5 * i), Integer.parseInt(strList.get(3+(5*i))), Integer.parseInt(strList.get(1+(5*i))), Integer.parseInt(strList.get(2+(5*i))), Double.parseDouble(strList.get(4+(5*i))), date));
+
+        if(strList.size() >0){
+            Log.d("items", strList.get(0));
+            for (int i = 0; i < items; i++) {
+                workouts.add(new Workouts(strList.get(5 * i), Integer.parseInt(strList.get(3+(5*i))), Integer.parseInt(strList.get(1+(5*i))), Integer.parseInt(strList.get(2+(5*i))), Double.parseDouble(strList.get(4+(5*i))), date));
+            }
         }
+
 
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
