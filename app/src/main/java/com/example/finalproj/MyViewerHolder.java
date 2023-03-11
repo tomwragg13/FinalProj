@@ -1,13 +1,16 @@
 package com.example.finalproj;
 
+import android.content.Context;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
+import java.util.Objects;
 
 public class MyViewerHolder extends RecyclerView.ViewHolder {
 
@@ -18,10 +21,12 @@ public class MyViewerHolder extends RecyclerView.ViewHolder {
     TextView setsView;
     TextView caloriesView;
 
+    ImageView expandButton;
+
     //Button removeItem;
     private MyAdapter adapter;
 
-    public MyViewerHolder(@NonNull View itemView, String email, String date, List<Workouts> items) {
+    public MyViewerHolder(@NonNull View itemView, String email, String date, List<Workouts> items, Context context, RecyclerView recyclerView, ImageView expandButton) {
         super(itemView);
 
 
@@ -35,7 +40,16 @@ public class MyViewerHolder extends RecyclerView.ViewHolder {
             adapter.items.remove(getAdapterPosition());
             adapter.notifyItemRemoved(getAdapterPosition());
             savedData.saveChanges(email, date, items);
-
+            //savedData.changeRecyclerSize(context, items, recyclerView);
+            savedData.addIfEmpty(recyclerView, context, items, email, date, expandButton);
+            //recyclerView.animate().translationY(0).setDuration(1000);
+            if(items.size() <5 && !Objects.equals(items.get(0).getName(), "Add Workouts")){
+                recyclerView.animate().translationYBy(pxFromDp(context, 75));
+                expandButton.animate().translationYBy(pxFromDp(context, 75));
+            }
+            if(items.size() == 1 ){
+                expandButton.animate().rotation(90);
+            }
 
         });
 
@@ -51,6 +65,10 @@ public class MyViewerHolder extends RecyclerView.ViewHolder {
     public MyViewerHolder linkAdapter(MyAdapter adapter){
         this.adapter = adapter;
         return this;
+    }
+
+    public static float pxFromDp(final Context context, final float dp) {
+        return dp * context.getResources().getDisplayMetrics().density;
     }
 
 

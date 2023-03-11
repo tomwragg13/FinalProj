@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -11,11 +12,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 public class MyAdapter extends RecyclerView.Adapter<MyViewerHolder> {
-    public MyAdapter(Context context, List<Workouts> items, String email, String date) {
+    public MyAdapter(Context context, List<Workouts> items, String email, String date, RecyclerView recyclerView, ImageView expandButton) {
         this.context = context;
         this.items = items;
         this.email = email;
         this.date = date;
+        this.recyclerView = recyclerView;
+        this.expandButton = expandButton;
     }
 
     Context context;
@@ -24,11 +27,14 @@ public class MyAdapter extends RecyclerView.Adapter<MyViewerHolder> {
     String email;
     String date;
 
+    RecyclerView recyclerView;
+    ImageView expandButton;
+
     @NonNull
     @Override
     public MyViewerHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         //View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.workout_item, parent, false);
-        return new MyViewerHolder(LayoutInflater.from(context).inflate(R.layout.workout_item,parent,false), email, date, items).linkAdapter(this);
+        return new MyViewerHolder(LayoutInflater.from(context).inflate(R.layout.workout_item,parent,false), email, date, items, context, recyclerView, expandButton).linkAdapter(this);
     }
 
     @Override

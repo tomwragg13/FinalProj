@@ -2,6 +2,11 @@ package com.example.finalproj;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -153,5 +158,30 @@ public class savedData {
         Log.d("data", workoutData);
 
         ClientHandler client = new ClientHandler("workoutData," + email + "," + date + "," + workoutData);
+    }
+
+    public static void changeRecyclerSize(Context context, List<Workouts> workouts, RecyclerView recyclerView){
+        final float scale = context.getResources().getDisplayMetrics().density;
+        int pixels = (int) (75 * scale + 0.5f);
+        if(workouts.size() < 6 && workouts.size() > 0){
+            recyclerView.getLayoutParams().height = workouts.size()*pixels;
+        }
+        if(workouts.size() == 0){
+            recyclerView.getLayoutParams().height = pixels;
+        }
+        if(workouts.size() > 5){
+            recyclerView.getLayoutParams().height = 5*pixels;
+        }
+    }
+
+    public static void addIfEmpty(RecyclerView recyclerView, Context context, List<Workouts> workouts, String email, String date, ImageView expandButton) {
+        if(workouts.size() == 0){
+            recyclerView.setLayoutManager(new LinearLayoutManager(context));
+
+            MyAdapter adapter = new MyAdapter(context, workouts, email, date, recyclerView, expandButton);
+            recyclerView.setAdapter(adapter);
+
+            workouts.add(new Workouts("Add Workouts", 0, 0, 0, 0, date));
+        }
     }
 }
