@@ -44,10 +44,10 @@ public class MyAdapter extends RecyclerView.Adapter<MyViewerHolder> {
     @Override
     public void onBindViewHolder(@NonNull MyViewerHolder holder, @SuppressLint("RecyclerView") int position) {
         holder.nameView.setText(items.get(position).getName());
-        holder.repsView.setText("x"+(Integer.toString(items.get(position).getReps())));
-        holder.weightView.setText((Integer.toString(items.get(position).getWeight()))+"Kg");
-        holder.setsView.setText("x"+(Integer.toString(items.get(position).getSets())));
-        holder.caloriesView.setText((Integer.toString((int) items.get(position).getCalories()))+"Kcal");
+        holder.repsView.setText("Reps: x"+(Integer.toString(items.get(position).getReps())));
+        holder.weightView.setText((Integer.toString(items.get(position).getWeight()))+" Kg");
+        holder.setsView.setText("Sets: x"+(Integer.toString(items.get(position).getSets())));
+        holder.caloriesView.setText("-"+(Integer.toString((int) items.get(position).getCalories()))+" kcal");
     }
 
     @Override

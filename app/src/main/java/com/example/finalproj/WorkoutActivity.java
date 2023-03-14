@@ -110,6 +110,13 @@ public class WorkoutActivity extends AppCompatActivity {
         savedData.addIfEmpty(recyclerView, getApplicationContext(), workouts, email, date, expandButton, recyclerHeight);
     }
 
+    public void openPBS(View view){
+        ClientHandler clientHandler = new ClientHandler("loadPBS," + email);
+        Log.d("PBS", clientHandler.getReturnMessage());
+        String pbList = clientHandler.getReturnMessage();
+        String[] messageData = pbList.split(",", -1);
+    }
+
     public void loadSpinner(){
         ClientHandler clientHandler = new ClientHandler("loadWorkouts," + email);
         String workoutList = clientHandler.getReturnMessage();
