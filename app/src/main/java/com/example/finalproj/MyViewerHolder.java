@@ -26,7 +26,7 @@ public class MyViewerHolder extends RecyclerView.ViewHolder {
     //Button removeItem;
     private MyAdapter adapter;
 
-    public MyViewerHolder(@NonNull View itemView, String email, String date, List<Workouts> items, Context context, RecyclerView recyclerView, ImageView expandButton) {
+    public MyViewerHolder(@NonNull View itemView, String email, String date, List<Workouts> items, Context context, RecyclerView recyclerView, ImageView expandButton, float recyclerHeight) {
         super(itemView);
 
 
@@ -41,11 +41,15 @@ public class MyViewerHolder extends RecyclerView.ViewHolder {
             adapter.notifyItemRemoved(getAdapterPosition());
             savedData.saveChanges(email, date, items);
             //savedData.changeRecyclerSize(context, items, recyclerView);
-            savedData.addIfEmpty(recyclerView, context, items, email, date, expandButton);
+            savedData.addIfEmpty(recyclerView, context, items, email, date, expandButton, recyclerHeight);
             //recyclerView.animate().translationY(0).setDuration(1000);
-            if(items.size() <5 && !Objects.equals(items.get(0).getName(), "Add Workouts")){
+
+            Log.d("l1", String.valueOf(recyclerHeight));
+            Log.d("l2", String.valueOf(recyclerView.getY()));
+            if(items.size() <5 && items.size() > 0 && recyclerView.getY() != recyclerHeight){
                 recyclerView.animate().translationYBy(pxFromDp(context, 75));
                 expandButton.animate().translationYBy(pxFromDp(context, 75));
+
             }
             if(items.size() == 1 ){
                 expandButton.animate().rotation(90);

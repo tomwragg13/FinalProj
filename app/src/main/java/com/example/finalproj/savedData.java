@@ -174,11 +174,11 @@ public class savedData {
         }
     }
 
-    public static void addIfEmpty(RecyclerView recyclerView, Context context, List<Workouts> workouts, String email, String date, ImageView expandButton) {
+    public static void addIfEmpty(RecyclerView recyclerView, Context context, List<Workouts> workouts, String email, String date, ImageView expandButton, float recyclerHeight) {
         if(workouts.size() == 0){
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
 
-            MyAdapter adapter = new MyAdapter(context, workouts, email, date, recyclerView, expandButton);
+            MyAdapter adapter = new MyAdapter(context, workouts, email, date, recyclerView, expandButton, recyclerHeight);
             recyclerView.setAdapter(adapter);
 
             workouts.add(new Workouts("Add Workouts", 0, 0, 0, 0, date));
