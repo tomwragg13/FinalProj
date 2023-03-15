@@ -8,6 +8,29 @@
     android:background="@drawable/bg1"
     tools:context=".WorkoutActivity">
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="0dp"
+        android:layout_height="375dp"
+        android:layout_marginBottom="-300dp"
+        android:background="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clickBlocker"
+        android:layout_width="0dp"
+        android:layout_height="1000dp"
+        android:layout_marginBottom="-1000dp"
+        android:background="#00F10000"
+        android:onClick="recyclerCloseView"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <Button
         android:id="@+id/createID"
         android:layout_width="wrap_content"
@@ -15,19 +38,17 @@
         android:layout_marginTop="60dp"
         android:onClick="createButton"
         android:text="New"
-        app:layout_constraintBottom_toTopOf="@+id/workoutSpinner"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/button12"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout4" />
 
     <Button
         android:id="@+id/button8"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="60dp"
+        android:layout_marginTop="8dp"
         android:onClick="addWorkout"
         android:text="Add"
-        app:layout_constraintBottom_toTopOf="@+id/expandButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/workoutSets" />
@@ -93,16 +114,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/backwards" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
-        android:layout_width="0dp"
-        android:layout_height="375dp"
-        android:layout_marginBottom="-300dp"
-        android:background="@color/black"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout3"
@@ -182,6 +193,7 @@
             android:layout_height="match_parent"
             android:layout_marginBottom="1dp"
             android:background="@color/bggblack"
+            android:onClick="preventTouch"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -227,12 +239,15 @@
         android:id="@+id/workoutWeight"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:ems="10"
         android:gravity="center"
         android:hint="Weight"
         android:inputType="number"
         app:layout_constraintBottom_toTopOf="@+id/workoutReps"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/button12"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/workoutSpinner" />
 
@@ -240,12 +255,16 @@
         android:id="@+id/workoutReps"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:ems="10"
         android:gravity="center"
         android:hint="Reps"
         android:inputType="number"
         app:layout_constraintBottom_toTopOf="@+id/workoutSets"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/button12"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/workoutWeight" />
 
@@ -253,24 +272,29 @@
         android:id="@+id/workoutSets"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:ems="10"
         android:gravity="center"
         android:hint="Sets"
         android:inputType="number"
         app:layout_constraintBottom_toTopOf="@+id/button8"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/button12"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/workoutReps" />
 
     <Spinner
         android:id="@+id/workoutSpinner"
-        android:layout_width="220dp"
+        android:layout_width="210dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="100dp"
+        android:layout_marginBottom="8dp"
         android:minHeight="48dp"
         android:textAlignment="center"
         app:layout_constraintBottom_toTopOf="@+id/workoutWeight"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/button12"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/createID" />
+        app:layout_constraintTop_toTopOf="@+id/createID" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

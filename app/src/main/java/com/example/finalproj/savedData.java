@@ -3,7 +3,6 @@ package com.example.finalproj;
 import android.content.Context;
 import android.util.Log;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -11,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -175,11 +173,11 @@ public class savedData {
     }
 
     public static void addIfEmpty(RecyclerView recyclerView, Context context, List<Workouts> workouts, String email, String date, ImageView expandButton, float recyclerHeight) {
-        if(workouts.size() == 0){
-            recyclerView.setLayoutManager(new LinearLayoutManager(context));
+        recyclerView.setLayoutManager(new LinearLayoutManager(context));
 
-            MyAdapter adapter = new MyAdapter(context, workouts, email, date, recyclerView, expandButton, recyclerHeight);
-            recyclerView.setAdapter(adapter);
+        workoutAdapter adapter = new workoutAdapter(context, workouts, email, date, recyclerView, expandButton, recyclerHeight);
+        recyclerView.setAdapter(adapter);
+        if(workouts.size() == 0){
 
             workouts.add(new Workouts("Add Workouts", 0, 0, 0, 0, date));
         }

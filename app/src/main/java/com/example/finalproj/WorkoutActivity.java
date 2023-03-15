@@ -5,6 +5,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.icu.text.SimpleDateFormat;
@@ -23,33 +24,39 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class WorkoutActivity extends AppCompatActivity {
 
     RecyclerView recyclerView;
     List<Workouts> workouts;
-    List<String> itemList;
+    List<personalBests> finalPBs;
+    List<String> workoutNames;
     EditText enterName, enterReps, enterWeight, enterSets;
-    MyAdapter adapter;
+    workoutAdapter adapter;
+    personalBestAdapter adapter1;
     String email;
     String name;
     int weight;
 
-    String date;
+    String date, expandType;
     TextView dateText, nameText, weightText, workoutNameInput;
-    ConstraintLayout mainPanel, hiddenInput;
+    ConstraintLayout mainPanel, hiddenInput, clickBlocker;
     ImageView expandButton;
 
     Button createID;
 
     Spinner workoutSpinner;
 
-    float recyclerHeight;
+    float recyclerHeight, expandButtonHeight, mainPanelHeight = 0;
     boolean expandState, isDown;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -62,6 +69,7 @@ public class WorkoutActivity extends AppCompatActivity {
 
         expandState = false;
         isDown = false;
+        expandType = "workouts";
         //workoutNameInput.setFocusable(false);
 
         enterReps = (EditText) findViewById(R.id.workoutReps);
@@ -76,14 +84,15 @@ public class WorkoutActivity extends AppCompatActivity {
         hiddenInput = (ConstraintLayout) findViewById(R.id.hiddenInput);
         workoutNameInput = (TextView) findViewById(R.id.workoutNameInput);
         workoutSpinner = (Spinner) findViewById(R.id.workoutSpinner);
+        clickBlocker = (ConstraintLayout) findViewById(R.id.clickBlocker);
 
         nameText.setText(name);
         weightText.setText(String.valueOf(weight + " Kg"));
 
-        itemList = new ArrayList<>();
-        itemList.add("Select Workout");
+        workoutNames = new ArrayList<>();
+        workoutNames.add("Select Workout");
         loadSpinner();
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, itemList);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, workoutNames);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         workoutSpinner.setAdapter(adapter);
 
@@ -93,28 +102,102 @@ public class WorkoutActivity extends AppCompatActivity {
         dateText.setText(DateHandler.getDate("null", date)[1]);
 
         loadWorkouts();
-        Log.d("h", String.valueOf(recyclerHeight));
 
+        recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                recyclerHeight = recyclerView.getY();
+                expandButtonHeight = expandButton.getY();
+                mainPanelHeight = mainPanel.getHeight();
 
-        recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(
-                new ViewTreeObserver.OnGlobalLayoutListener() {
-                    @Override
-                    public void onGlobalLayout() {
-                        recyclerHeight = recyclerView.getY();
+                Log.d("PanelH", String.valueOf(mainPanelHeight));
+                savedData.addIfEmpty(recyclerView, getApplicationContext(), workouts, email, date, expandButton, recyclerHeight);
 
-                        // Don't forget to remove your listener when you are done with it.
-                        recyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                    }
-                });
+                // Don't forget to remove your listener when you are done with it.
+                recyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
 
-        savedData.addIfEmpty(recyclerView, getApplicationContext(), workouts, email, date, expandButton, recyclerHeight);
+            }
+        });
+
     }
 
     public void openPBS(View view){
-        ClientHandler clientHandler = new ClientHandler("loadPBS," + email);
-        Log.d("PBS", clientHandler.getReturnMessage());
-        String pbList = clientHandler.getReturnMessage();
-        String[] messageData = pbList.split(",", -1);
+
+        if(!Objects.equals(expandType, "PB")){
+            expandType = "PB";
+            StringBuilder workoutSearch = new StringBuilder();
+            for (int i = 0; i < workoutNames.size(); i++) {
+                if(!Objects.equals(workoutNames.get(i), "Select Workout")){
+                    workoutSearch.append(workoutNames.get(i));
+                    workoutSearch.append(",");
+                }
+            }
+
+            String newStr = "";
+            if(workoutSearch.length() > 0){
+                newStr = workoutSearch.substring(0, workoutSearch.length() - 1);
+            }
+
+            ClientHandler clientHandler = new ClientHandler("loadPBS," + email + "," + newStr);
+            Log.d("PBS", clientHandler.getReturnMessage());
+            String pbList = clientHandler.getReturnMessage();
+            String[] messageData = pbList.split(",", -1);
+
+            List<personalBests> PBs = new ArrayList<personalBests>();
+
+            for (int i = 0; i < messageData.length-1; i += 3) {
+                // Get the current name and number
+                String name = messageData[i+1];
+                int number = Integer.parseInt(messageData[i + 2]);
+                String date = messageData[i];
+                Log.d("data", name + " " + number + " " + date);
+
+                // Create a new object with the current name and number
+                personalBests pb = new personalBests(name, number, date);
+
+                PBs.add(pb);
+            }
+
+            Map<String, personalBests> map = new HashMap<>();
+            for (personalBests pb : PBs) {
+                String name = pb.getName();
+                if (!map.containsKey(name) || map.get(name).getWeight() < pb.getWeight()) {
+                    map.put(name, pb);
+                }
+            }
+            finalPBs = new ArrayList<>(map.values());
+            finalPBs.sort(Comparator.comparing(personalBests::getName));
+
+            if(finalPBs.size() > 0){
+                recyclerView = findViewById(R.id.recyclerView);
+                recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+                adapter1 = new personalBestAdapter(getApplicationContext(), finalPBs);
+                recyclerView.setAdapter(adapter1);
+            }else{
+                SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
+                String today = sdf.format(new Date());
+
+                finalPBs = new ArrayList<>();
+                finalPBs.add(new personalBests("Add Workouts To See PBs", 0, today));
+
+                recyclerView = findViewById(R.id.recyclerView);
+                recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+                adapter1 = new personalBestAdapter(getApplicationContext(), finalPBs);
+                recyclerView.setAdapter(adapter1);
+            }
+        }else{
+            recyclerView = findViewById(R.id.recyclerView);
+            recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+            expandType = "workouts";
+            adapter = new workoutAdapter(getApplicationContext(), workouts, email, date, recyclerView, expandButton, recyclerHeight);
+            recyclerView.setAdapter(adapter);
+        }
+
+
+
     }
 
     public void loadSpinner(){
@@ -124,14 +207,14 @@ public class WorkoutActivity extends AppCompatActivity {
 
         String[] messageData = workoutList.split(",", -1);
 
-        itemList.addAll(Arrays.asList(messageData));
-        itemList.remove(itemList.size()-1);
-        itemList.remove(0);
-        Collections.sort(itemList);
-        itemList.add(0, "Select Workout");
+        workoutNames.addAll(Arrays.asList(messageData));
+        workoutNames.remove(workoutNames.size()-1);
+        workoutNames.remove(0);
+        Collections.sort(workoutNames);
+        workoutNames.add(0, "Select Workout");
 
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, itemList);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, workoutNames);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         workoutSpinner.setAdapter(adapter);
 
@@ -161,13 +244,13 @@ public class WorkoutActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(),"Workout Created",Toast.LENGTH_SHORT).show();
                 ClientHandler clientHandler = new ClientHandler("createWorkout," + email + "," + capitalizedString);
 
-                itemList.remove(0);
-                itemList.add(capitalizedString);
-                Collections.sort(itemList);
-                itemList.add(0, "Select Workout");
+                workoutNames.remove(0);
+                workoutNames.add(capitalizedString);
+                Collections.sort(workoutNames);
+                workoutNames.add(0, "Select Workout");
 
 
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, itemList);
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, workoutNames);
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 workoutSpinner.setAdapter(adapter);
 
@@ -193,7 +276,7 @@ public class WorkoutActivity extends AppCompatActivity {
         Log.d("state", String.valueOf(expandState));
 
         int expandNum = 5;
-        int duration = 500;
+        int duration = (int) (recyclerHeight/5);
 
         //Log.d("height", String.valueOf(pxFromDp(getApplicationContext(), recyclerHeight)));
         Log.d("pass1", String.valueOf(recyclerHeight));
@@ -204,12 +287,8 @@ public class WorkoutActivity extends AppCompatActivity {
         }
 
         if(workouts.size() != 1){
-            //savedData.changeRecyclerSize(getApplicationContext(), workouts, recyclerView);
+            if(!Objects.equals(workouts.get(0).getName(), "Add Workouts") && Objects.equals(expandType, "workouts")){
 
-
-
-            if(!Objects.equals(workouts.get(0).getName(), "Add Workouts")){
-                //Log.d("pass", String.valueOf(workouts.size()));
                 float px = 0;
                 if(!expandState){
                     if(workouts.size()>expandNum){
@@ -221,10 +300,11 @@ public class WorkoutActivity extends AppCompatActivity {
                     }
                     expandButton.animate().rotation(-90);
                     expandState = true;
+
+                    clickBlocker.animate().y(pxFromDp(getApplicationContext(), 120));
+                    clickBlocker.setElevation(999);
                 }else{
-                    px = 0;
-                    expandState = false;
-                    expandButton.animate().rotation(90);
+                    closeRecycler();
                 }
 
                 expandButton.animate().translationY(px).setDuration(duration);
@@ -233,30 +313,42 @@ public class WorkoutActivity extends AppCompatActivity {
                 recyclerView.setElevation(1000);
                 expandButton.setElevation(1000);
 
+
+
             }
         }
-    }
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        int px = mainPanel.getHeight();
+        try {
+            if(finalPBs.size() !=1){
+                if(!Objects.equals(finalPBs.get(0).getName(), "Add Workouts To See PBs") && Objects.equals(expandType, "PB")){
+                    float px = 0;
+                    if(!expandState){
+                        if(finalPBs.size()>expandNum){
+                            px = pxFromDp(getApplicationContext(), -(75*(expandNum-1)));
+                        }
+                        if(finalPBs.size() >1 && finalPBs.size() <=expandNum){
+                            px = pxFromDp(getApplicationContext(), -(75*finalPBs.size()-75));
 
-        //DisplayMetrics displayMetrics = getApplicationContext().getResources().getDisplayMetrics();
-        //int dp = Math.round(px / (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+                        }
+                        expandButton.animate().rotation(-90);
+                        expandState = true;
 
-        float dp = dpFromPx(getApplicationContext(), px);
-        //float dp = dpFromPx(px);
-        Log.d("hi", String.valueOf(dp));
+                        clickBlocker.animate().y(pxFromDp(getApplicationContext(), 120));
+                        clickBlocker.setElevation(999);
+                    }else{
+                        closeRecycler();
+                    }
 
-        //dp -= 120;
-        dp -= 75;
-        //recyclerHeight = dp;
+                    expandButton.animate().translationY(px).setDuration(duration);
+                    recyclerView.animate().translationY(px).setDuration(duration);
 
-        //Log.d("hi", String.valueOf(dp));
+                    recyclerView.setElevation(1000);
+                    expandButton.setElevation(1000);
+                }
+            }
+        } catch (Exception e) {
+            Log.d("Error", "PBNull");
+        }
 
-        //float px = pxFromDp(getApplicationContext(), (75*workouts.size())-75);
-
-        //recyclerView.animate().translationY(-px).setDuration(100000);
     }
 
     private void loadWorkouts(){
@@ -283,7 +375,8 @@ public class WorkoutActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        adapter = new MyAdapter(getApplicationContext(), workouts, email, date, recyclerView, expandButton, recyclerHeight);
+        expandType = "workouts";
+        adapter = new workoutAdapter(getApplicationContext(), workouts, email, date, recyclerView, expandButton, recyclerHeight);
         recyclerView.setAdapter(adapter);
 
         //savedData.changeRecyclerSize(getApplicationContext(), workouts, recyclerView);
@@ -314,7 +407,8 @@ public class WorkoutActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        adapter = new MyAdapter(getApplicationContext(), workouts, email, date, recyclerView, expandButton, recyclerHeight);
+        expandType = "workouts";
+        adapter = new workoutAdapter(getApplicationContext(), workouts, email, date, recyclerView, expandButton, recyclerHeight);
         recyclerView.setAdapter(adapter);
 
         loadWorkouts();
@@ -327,6 +421,7 @@ public class WorkoutActivity extends AppCompatActivity {
         date = dateData[0];
         dateText.setText(dateData[1]);
         loadWorkouts();
+        closeRecycler();
 
         savedData.addIfEmpty(recyclerView, getApplicationContext(), workouts, email, date, expandButton, recyclerHeight);
     }
@@ -336,8 +431,30 @@ public class WorkoutActivity extends AppCompatActivity {
         date = dateData[0];
         dateText.setText(dateData[1]);
         loadWorkouts();
+        closeRecycler();
+
 
         savedData.addIfEmpty(recyclerView, getApplicationContext(), workouts, email, date, expandButton, recyclerHeight);
     }
+
+    public void closeRecycler(){
+        long duration = (long) (recyclerHeight/5);
+        recyclerView.animate().y(recyclerHeight).setDuration(duration);
+        expandButton.animate().y(expandButtonHeight).setDuration(duration);
+        expandButton.animate().rotation(90).setDuration(duration);
+        expandState = false;
+
+        clickBlocker.animate().y(mainPanelHeight).setDuration(1);
+    }
+
+    public void preventTouch(View view){
+
+    }
+
+    public void recyclerCloseView(View view){
+        closeRecycler();
+    }
+
+
 
 }

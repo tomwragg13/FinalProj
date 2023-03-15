@@ -2,6 +2,7 @@ package com.example.finalproj;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -11,9 +12,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-public class MyAdapter extends RecyclerView.Adapter<MyViewerHolder> {
+public class workoutAdapter extends RecyclerView.Adapter<workoutViewHolder> {
 
-    public MyAdapter(Context context, List<Workouts> items, String email, String date, RecyclerView recyclerView, ImageView expandButton, float recyclerHeight) {
+    public workoutAdapter(Context context, List<Workouts> items, String email, String date, RecyclerView recyclerView, ImageView expandButton, float recyclerHeight) {
         this.context = context;
         this.items = items;
         this.email = email;
@@ -36,14 +37,13 @@ public class MyAdapter extends RecyclerView.Adapter<MyViewerHolder> {
 
     @NonNull
     @Override
-    public MyViewerHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        //View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.workout_item, parent, false);
-        return new MyViewerHolder(LayoutInflater.from(context).inflate(R.layout.workout_item,parent,false), email, date, items, context, recyclerView, expandButton, recyclerHeight).linkAdapter(this);
+    public workoutViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        return new workoutViewHolder(LayoutInflater.from(context).inflate(R.layout.workout_item,parent,false), email, date, items, context, recyclerView, expandButton, recyclerHeight).linkAdapter(this);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyViewerHolder holder, @SuppressLint("RecyclerView") int position) {
-        holder.nameView.setText(items.get(position).getName());
+    public void onBindViewHolder(@NonNull workoutViewHolder holder, @SuppressLint("RecyclerView") int position) {
+        holder.nameView.setText(items.get(position).getName()+":");
         holder.repsView.setText("Reps: x"+(Integer.toString(items.get(position).getReps())));
         holder.weightView.setText((Integer.toString(items.get(position).getWeight()))+" Kg");
         holder.setsView.setText("Sets: x"+(Integer.toString(items.get(position).getSets())));

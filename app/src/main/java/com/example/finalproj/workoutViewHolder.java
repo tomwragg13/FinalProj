@@ -10,9 +10,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
-import java.util.Objects;
 
-public class MyViewerHolder extends RecyclerView.ViewHolder {
+public class workoutViewHolder extends RecyclerView.ViewHolder {
 
     TextView nameView;
     TextView repsView;
@@ -24,16 +23,17 @@ public class MyViewerHolder extends RecyclerView.ViewHolder {
     ImageView expandButton;
 
     //Button removeItem;
-    private MyAdapter adapter;
+    private workoutAdapter adapter;
 
-    public MyViewerHolder(@NonNull View itemView, String email, String date, List<Workouts> items, Context context, RecyclerView recyclerView, ImageView expandButton, float recyclerHeight) {
+    public workoutViewHolder(@NonNull View itemView, String email, String date, List<Workouts> items, Context context, RecyclerView recyclerView, ImageView expandButton, float recyclerHeight) {
         super(itemView);
+        Log.d("AIE", String.valueOf(recyclerHeight));
 
 
 
-        nameView = itemView.findViewById(R.id.name);
+        nameView = itemView.findViewById(R.id.Name);
         repsView = itemView.findViewById(R.id.reps);
-        weightView = itemView.findViewById(R.id.weight);
+        weightView = itemView.findViewById(R.id.Weight);
         setsView = itemView.findViewById(R.id.sets);
         caloriesView = itemView.findViewById(R.id.calories);
         itemView.findViewById(R.id.removeButton).setOnClickListener(view -> {
@@ -66,7 +66,7 @@ public class MyViewerHolder extends RecyclerView.ViewHolder {
         });
         
     }
-    public MyViewerHolder linkAdapter(MyAdapter adapter){
+    public workoutViewHolder linkAdapter(workoutAdapter adapter){
         this.adapter = adapter;
         return this;
     }
