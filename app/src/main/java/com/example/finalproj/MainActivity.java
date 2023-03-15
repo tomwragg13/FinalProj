@@ -85,8 +85,6 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
 
-        Log.d("test1","");
-
         ClientHandler client = new ClientHandler("userData,tom5,tom6," + savedEmail + ",pass,10");
         String isTaken = client.getReturnMessage();
         String[] isTakenData = isTaken.split(",", -1);

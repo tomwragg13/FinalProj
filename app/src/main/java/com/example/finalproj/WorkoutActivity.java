@@ -13,6 +13,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -70,6 +72,7 @@ public class WorkoutActivity extends AppCompatActivity {
         expandState = false;
         isDown = false;
         expandType = "workouts";
+
         //workoutNameInput.setFocusable(false);
 
         enterReps = (EditText) findViewById(R.id.workoutReps);
@@ -111,7 +114,7 @@ public class WorkoutActivity extends AppCompatActivity {
                 mainPanelHeight = mainPanel.getHeight();
 
                 Log.d("PanelH", String.valueOf(mainPanelHeight));
-                savedData.addIfEmpty(recyclerView, getApplicationContext(), workouts, email, date, expandButton, recyclerHeight);
+                savedData.addIfEmpty(recyclerView, getApplicationContext(), workouts, email, date, expandButton, recyclerHeight, finalPBs, expandType, clickBlocker);
 
                 // Don't forget to remove your listener when you are done with it.
                 recyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
@@ -121,10 +124,12 @@ public class WorkoutActivity extends AppCompatActivity {
 
     }
 
-    public void openPBS(View view){
 
-        if(!Objects.equals(expandType, "PB")){
-            expandType = "PB";
+    public void openPBSbutton(View view){
+        boolean toggle = false;
+        Log.d("type", expandType);
+
+        if(Objects.equals(expandType, "workouts") && !toggle){
             StringBuilder workoutSearch = new StringBuilder();
             for (int i = 0; i < workoutNames.size(); i++) {
                 if(!Objects.equals(workoutNames.get(i), "Select Workout")){
@@ -187,17 +192,22 @@ public class WorkoutActivity extends AppCompatActivity {
                 adapter1 = new personalBestAdapter(getApplicationContext(), finalPBs);
                 recyclerView.setAdapter(adapter1);
             }
-        }else{
+            expandType = "PB";
+            toggle = true;
+            expandView();
+        }
+        if(Objects.equals(expandType, "PB") && !toggle){
             recyclerView = findViewById(R.id.recyclerView);
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
             expandType = "workouts";
-            adapter = new workoutAdapter(getApplicationContext(), workouts, email, date, recyclerView, expandButton, recyclerHeight);
+            adapter = new workoutAdapter(getApplicationContext(), workouts, email, date, recyclerView, expandButton, recyclerHeight, finalPBs, expandType, clickBlocker);
             recyclerView.setAdapter(adapter);
+            toggle = true;
         }
 
-
-
+        Log.d("type", expandType);
+        expanderToggle();
     }
 
     public void loadSpinner(){
@@ -272,11 +282,12 @@ public class WorkoutActivity extends AppCompatActivity {
     public static float pxFromDp(final Context context, final float dp) {
         return dp * context.getResources().getDisplayMetrics().density;
     }
-    public void expandView(View view){
+
+    public void expandView(){
         Log.d("state", String.valueOf(expandState));
 
         int expandNum = 5;
-        int duration = (int) (recyclerHeight/5);
+        int duration = 1000;
 
         //Log.d("height", String.valueOf(pxFromDp(getApplicationContext(), recyclerHeight)));
         Log.d("pass1", String.valueOf(recyclerHeight));
@@ -301,14 +312,16 @@ public class WorkoutActivity extends AppCompatActivity {
                     expandButton.animate().rotation(-90);
                     expandState = true;
 
+                    expandButton.animate().translationY(px).setDuration(duration);
+                    recyclerView.animate().translationY(px).setDuration(duration);
+
                     clickBlocker.animate().y(pxFromDp(getApplicationContext(), 120));
                     clickBlocker.setElevation(999);
                 }else{
                     closeRecycler();
                 }
 
-                expandButton.animate().translationY(px).setDuration(duration);
-                recyclerView.animate().translationY(px).setDuration(duration);
+
 
                 recyclerView.setElevation(1000);
                 expandButton.setElevation(1000);
@@ -332,14 +345,15 @@ public class WorkoutActivity extends AppCompatActivity {
                         expandButton.animate().rotation(-90);
                         expandState = true;
 
+                        expandButton.animate().translationY(px).setDuration(duration);
+                        recyclerView.animate().translationY(px).setDuration(duration);
+
                         clickBlocker.animate().y(pxFromDp(getApplicationContext(), 120));
                         clickBlocker.setElevation(999);
                     }else{
                         closeRecycler();
                     }
 
-                    expandButton.animate().translationY(px).setDuration(duration);
-                    recyclerView.animate().translationY(px).setDuration(duration);
 
                     recyclerView.setElevation(1000);
                     expandButton.setElevation(1000);
@@ -348,7 +362,9 @@ public class WorkoutActivity extends AppCompatActivity {
         } catch (Exception e) {
             Log.d("Error", "PBNull");
         }
-
+    }
+    public void expandViewButton(View view){
+        expandView();
     }
 
     private void loadWorkouts(){
@@ -375,18 +391,26 @@ public class WorkoutActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        expandType = "workouts";
-        adapter = new workoutAdapter(getApplicationContext(), workouts, email, date, recyclerView, expandButton, recyclerHeight);
+        //expandType = "workouts";
+        adapter = new workoutAdapter(getApplicationContext(), workouts, email, date, recyclerView, expandButton, recyclerHeight, finalPBs, expandType, clickBlocker);
         recyclerView.setAdapter(adapter);
 
-        //savedData.changeRecyclerSize(getApplicationContext(), workouts, recyclerView);
+        Log.d("size", String.valueOf(workouts.size()));
+
+        expandType = "workouts";
+        expanderToggle();
+
     }
 
     @Override
     public void onBackPressed() {
-        Intent myInt = new Intent(getApplicationContext(), HomeActivity.class);
-        startActivity(myInt);
-        overridePendingTransition(0,R.anim.slide_out_right);
+        if(expandState){
+            closeRecycler();
+        }else{
+            Intent myInt = new Intent(getApplicationContext(), HomeActivity.class);
+            startActivity(myInt);
+            overridePendingTransition(0,R.anim.slide_out_right);
+        }
     }
 
     public void goBack(View view) {
@@ -407,11 +431,13 @@ public class WorkoutActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        expandType = "workouts";
-        adapter = new workoutAdapter(getApplicationContext(), workouts, email, date, recyclerView, expandButton, recyclerHeight);
+        adapter = new workoutAdapter(getApplicationContext(), workouts, email, date, recyclerView, expandButton, recyclerHeight, finalPBs, expandType, clickBlocker);
         recyclerView.setAdapter(adapter);
 
         loadWorkouts();
+
+
+
 
 
     }
@@ -423,7 +449,10 @@ public class WorkoutActivity extends AppCompatActivity {
         loadWorkouts();
         closeRecycler();
 
-        savedData.addIfEmpty(recyclerView, getApplicationContext(), workouts, email, date, expandButton, recyclerHeight);
+
+
+        savedData.addIfEmpty(recyclerView, getApplicationContext(), workouts, email, date, expandButton, recyclerHeight, finalPBs, expandType, clickBlocker);
+
     }
 
     public void backButton(View view){
@@ -433,18 +462,115 @@ public class WorkoutActivity extends AppCompatActivity {
         loadWorkouts();
         closeRecycler();
 
-
-        savedData.addIfEmpty(recyclerView, getApplicationContext(), workouts, email, date, expandButton, recyclerHeight);
+        savedData.addIfEmpty(recyclerView, getApplicationContext(), workouts, email, date, expandButton, recyclerHeight, finalPBs, expandType, clickBlocker);
     }
 
     public void closeRecycler(){
-        long duration = (long) (recyclerHeight/5);
-        recyclerView.animate().y(recyclerHeight).setDuration(duration);
-        expandButton.animate().y(expandButtonHeight).setDuration(duration);
-        expandButton.animate().rotation(90).setDuration(duration);
-        expandState = false;
+        Log.d("tpp", expandType);
+        if(Objects.equals(expandType, "workouts")){
+
+            recyclerView.animate().y(recyclerHeight).setDuration(1000);
+            expandButton.animate().y(expandButtonHeight).setDuration(1000);
+            expandButton.animate().rotation(90).setDuration(1000);
+            expandState = false;
+
+            recyclerView = findViewById(R.id.recyclerView);
+            recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+            adapter = new workoutAdapter(getApplicationContext(), workouts, email, date, recyclerView, expandButton, recyclerHeight, finalPBs, expandType, clickBlocker);
+            recyclerView.setAdapter(adapter);
+        }
+        if(Objects.equals(expandType, "PB")){
+
+
+            Log.d("test", "test");
+            recyclerView.animate().y(mainPanelHeight).setDuration(1000);
+            expandButton.animate().y(mainPanelHeight-pxFromDp(getApplicationContext(), 40)).setDuration(1000);
+            //expandButton.animate().rotation(90).setDuration(2000);
+
+            recyclerView.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    recyclerView = findViewById(R.id.recyclerView);
+                    recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+
+                    expandState = false;
+                    adapter = new workoutAdapter(getApplicationContext(), workouts, email, date, recyclerView, expandButton, recyclerHeight, finalPBs, expandType, clickBlocker);
+                    recyclerView.setAdapter(adapter);
+                    recyclerView.animate().y(recyclerHeight).setDuration(1000);
+                    expandButton.animate().y(expandButtonHeight).setDuration(1000);
+                    expandButton.animate().rotation(90).setDuration(1000);
+                }
+            }, 1000);
+
+        }
 
         clickBlocker.animate().y(mainPanelHeight).setDuration(1);
+
+
+
+        Log.d("close", expandType);
+        expandType = "workouts";
+        expanderToggle();
+
+    }
+
+
+    public void expanderToggle(){
+        Log.d("WS", String.valueOf(workouts.size()));
+        //Log.d("PBS", String.valueOf(finalPBs.size()));
+        Log.d("ET", expandType);
+        if(workouts.size() >= 2  && Objects.equals(expandType, "workouts")){
+            Animation fadeout = new AlphaAnimation(0.f, 1.f);
+            fadeout.setDuration(1000);
+            expandButton.startAnimation(fadeout);
+            expandButton.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    expandButton.setVisibility(View.VISIBLE);
+                }
+            }, 1000);
+        }
+        if(workouts.size() <= 1  && Objects.equals(expandType, "workouts")){
+            Animation fadeout = new AlphaAnimation(1.f, 0.f);
+            fadeout.setDuration(1000);
+            expandButton.startAnimation(fadeout);
+            expandButton.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    expandButton.setVisibility(View.GONE);
+                }
+            }, 1000);
+        }
+
+        try{
+            if(finalPBs.size() < 2 && Objects.equals(expandType, "PB")){
+                Animation fadeout = new AlphaAnimation(1.f, 0.f);
+                fadeout.setDuration(1000);
+                expandButton.startAnimation(fadeout);
+                expandButton.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        expandButton.setVisibility(View.GONE);
+                    }
+                }, 1000);
+            }
+            if(finalPBs.size() >= 2 && Objects.equals(expandType, "PB")){
+                Animation fadeout = new AlphaAnimation(0.f, 1.f);
+                fadeout.setDuration(1000);
+                expandButton.startAnimation(fadeout);
+                expandButton.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        expandButton.setVisibility(View.VISIBLE);
+                    }
+                }, 1000);
+            }
+        } catch (Exception e) {
+            Log.d("NULLPB", "NULLPB");
+        }
+
+
     }
 
     public void preventTouch(View view){

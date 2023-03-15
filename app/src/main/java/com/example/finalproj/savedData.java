@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.ImageView;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -172,10 +173,11 @@ public class savedData {
         }
     }
 
-    public static void addIfEmpty(RecyclerView recyclerView, Context context, List<Workouts> workouts, String email, String date, ImageView expandButton, float recyclerHeight) {
+    public static void addIfEmpty(RecyclerView recyclerView, Context context, List<Workouts> workouts, String email, String date, ImageView expandButton, float recyclerHeight,
+                                  List<personalBests> PBs, String expandType, ConstraintLayout clickBlocker) {
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
 
-        workoutAdapter adapter = new workoutAdapter(context, workouts, email, date, recyclerView, expandButton, recyclerHeight);
+        workoutAdapter adapter = new workoutAdapter(context, workouts, email, date, recyclerView, expandButton, recyclerHeight, PBs, expandType, clickBlocker);
         recyclerView.setAdapter(adapter);
         if(workouts.size() == 0){
 

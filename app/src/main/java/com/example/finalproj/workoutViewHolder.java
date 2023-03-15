@@ -3,13 +3,17 @@ package com.example.finalproj;
 import android.content.Context;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
+import java.util.Objects;
 
 public class workoutViewHolder extends RecyclerView.ViewHolder {
 
@@ -25,7 +29,10 @@ public class workoutViewHolder extends RecyclerView.ViewHolder {
     //Button removeItem;
     private workoutAdapter adapter;
 
-    public workoutViewHolder(@NonNull View itemView, String email, String date, List<Workouts> items, Context context, RecyclerView recyclerView, ImageView expandButton, float recyclerHeight) {
+    boolean expandButtonView = true;
+
+    public workoutViewHolder(@NonNull View itemView, String email, String date, List<Workouts> workouts, Context context, RecyclerView recyclerView, ImageView expandButton, float recyclerHeight,
+                             String expandType, List<personalBests> finalPBs, ConstraintLayout clickBlocker) {
         super(itemView);
         Log.d("AIE", String.valueOf(recyclerHeight));
 
@@ -39,20 +46,51 @@ public class workoutViewHolder extends RecyclerView.ViewHolder {
         itemView.findViewById(R.id.removeButton).setOnClickListener(view -> {
             adapter.items.remove(getAdapterPosition());
             adapter.notifyItemRemoved(getAdapterPosition());
-            savedData.saveChanges(email, date, items);
+            savedData.saveChanges(email, date, workouts);
             //savedData.changeRecyclerSize(context, items, recyclerView);
-            savedData.addIfEmpty(recyclerView, context, items, email, date, expandButton, recyclerHeight);
+            savedData.addIfEmpty(recyclerView, context, workouts, email, date, expandButton, recyclerHeight, finalPBs, expandType, clickBlocker);
             //recyclerView.animate().translationY(0).setDuration(1000);
 
             Log.d("l1", String.valueOf(recyclerHeight));
             Log.d("l2", String.valueOf(recyclerView.getY()));
-            if(items.size() <5 && items.size() > 0 && recyclerView.getY() != recyclerHeight){
+            if(workouts.size() <5 && workouts.size() > 0 && recyclerView.getY() != recyclerHeight){
                 recyclerView.animate().translationYBy(pxFromDp(context, 75));
                 expandButton.animate().translationYBy(pxFromDp(context, 75));
-
             }
-            if(items.size() == 1 ){
+
+            if(workouts.size() == 1 ){
                 expandButton.animate().rotation(90);
+                clickBlocker.animate().y(20000).setDuration(1);
+
+                if(workouts.size() < 2 && Objects.equals(expandType, "workouts") && expandButtonView){
+                    Animation fadeout = new AlphaAnimation(1.f, 0.f);
+                    fadeout.setDuration(500);
+                    expandButton.startAnimation(fadeout);
+                    expandButton.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            expandButton.setVisibility(View.GONE);
+                            expandButtonView = false;
+                        }
+                    }, 500);
+                }
+                if(workouts.size() >= 2 && !expandButtonView){
+                    Animation fadeout = new AlphaAnimation(0.f, 1.f);
+                    fadeout.setDuration(500);
+                    expandButton.startAnimation(fadeout);
+                    expandButton.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            expandButton.setVisibility(View.VISIBLE);
+                            expandButtonView = true;
+                        }
+                    }, 500);
+                }
+                if(workouts.size() < 2 && Objects.equals(expandType, "workouts") && !expandButtonView){
+                    expandButton.setVisibility(View.GONE);
+                    expandButtonView = false;
+                }
+
             }
 
         });
