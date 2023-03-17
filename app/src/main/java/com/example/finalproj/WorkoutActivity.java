@@ -177,8 +177,8 @@ public class WorkoutActivity extends AppCompatActivity {
                 recyclerView = findViewById(R.id.recyclerView);
                 recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-                adapter1 = new personalBestAdapter(getApplicationContext(), finalPBs);
-                recyclerView.setAdapter(adapter1);
+                //adapter1 = new personalBestAdapter(getApplicationContext(), finalPBs);
+                //recyclerView.setAdapter(adapter1);
             }else{
                 SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
                 String today = sdf.format(new Date());
@@ -200,9 +200,10 @@ public class WorkoutActivity extends AppCompatActivity {
             recyclerView = findViewById(R.id.recyclerView);
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-            expandType = "workouts";
             adapter = new workoutAdapter(getApplicationContext(), workouts, email, date, recyclerView, expandButton, recyclerHeight, finalPBs, expandType, clickBlocker);
             recyclerView.setAdapter(adapter);
+
+            expandType = "workouts";
             toggle = true;
         }
 
@@ -287,7 +288,7 @@ public class WorkoutActivity extends AppCompatActivity {
         Log.d("state", String.valueOf(expandState));
 
         int expandNum = 5;
-        int duration = 1000;
+        int duration = 500;
 
         //Log.d("height", String.valueOf(pxFromDp(getApplicationContext(), recyclerHeight)));
         Log.d("pass1", String.valueOf(recyclerHeight));
@@ -315,7 +316,7 @@ public class WorkoutActivity extends AppCompatActivity {
                     expandButton.animate().translationY(px).setDuration(duration);
                     recyclerView.animate().translationY(px).setDuration(duration);
 
-                    clickBlocker.animate().y(pxFromDp(getApplicationContext(), 120));
+                    clickBlocker.animate().y(pxFromDp(getApplicationContext(), 0));
                     clickBlocker.setElevation(999);
                 }else{
                     closeRecycler();
@@ -336,19 +337,39 @@ public class WorkoutActivity extends AppCompatActivity {
                     float px = 0;
                     if(!expandState){
                         if(finalPBs.size()>expandNum){
-                            px = pxFromDp(getApplicationContext(), -(75*(expandNum-1)));
+                            px = pxFromDp(getApplicationContext(), -(75*(expandNum)));
                         }
                         if(finalPBs.size() >1 && finalPBs.size() <=expandNum){
-                            px = pxFromDp(getApplicationContext(), -(75*finalPBs.size()-75));
+                            px = pxFromDp(getApplicationContext(), -(75*finalPBs.size()));
 
                         }
-                        expandButton.animate().rotation(-90);
+
                         expandState = true;
 
-                        expandButton.animate().translationY(px).setDuration(duration);
-                        recyclerView.animate().translationY(px).setDuration(duration);
+                        expandButton.animate().y(mainPanelHeight -pxFromDp(getApplicationContext(), 8+32)).setDuration(500);
+                        recyclerView.animate().y(mainPanelHeight).setDuration(500);
 
-                        clickBlocker.animate().y(pxFromDp(getApplicationContext(), 120));
+                        float finalPx = px;
+                        recyclerView.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                recyclerView = findViewById(R.id.recyclerView);
+                                recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+
+                                adapter1 = new personalBestAdapter(getApplicationContext(), finalPBs);
+                                recyclerView.setAdapter(adapter1);
+
+                                expandState = false;
+                                //adapter = new workoutAdapter(getApplicationContext(), workouts, email, date, recyclerView, expandButton, recyclerHeight, finalPBs, expandType, clickBlocker);
+                                //recyclerView.setAdapter(adapter);
+                                expandButton.animate().rotation(-90).setDuration(500);
+                                recyclerView.animate().y(mainPanelHeight+finalPx).setDuration(500);
+                                expandButton.animate().y(mainPanelHeight+finalPx-pxFromDp(getApplicationContext(), 8+32)).setDuration(500);
+                                //expandButton.animate().rotation(90).setDuration(500);
+                            }
+                        }, 500);
+
+                        clickBlocker.animate().y(pxFromDp(getApplicationContext(), 0));
                         clickBlocker.setElevation(999);
                     }else{
                         closeRecycler();
@@ -469,9 +490,9 @@ public class WorkoutActivity extends AppCompatActivity {
         Log.d("tpp", expandType);
         if(Objects.equals(expandType, "workouts")){
 
-            recyclerView.animate().y(recyclerHeight).setDuration(1000);
-            expandButton.animate().y(expandButtonHeight).setDuration(1000);
-            expandButton.animate().rotation(90).setDuration(1000);
+            recyclerView.animate().y(recyclerHeight).setDuration(500);
+            expandButton.animate().y(expandButtonHeight).setDuration(500);
+            expandButton.animate().rotation(90).setDuration(500);
             expandState = false;
 
             recyclerView = findViewById(R.id.recyclerView);
@@ -484,8 +505,8 @@ public class WorkoutActivity extends AppCompatActivity {
 
 
             Log.d("test", "test");
-            recyclerView.animate().y(mainPanelHeight).setDuration(1000);
-            expandButton.animate().y(mainPanelHeight-pxFromDp(getApplicationContext(), 40)).setDuration(1000);
+            recyclerView.animate().y(mainPanelHeight).setDuration(500);
+            expandButton.animate().y(mainPanelHeight-pxFromDp(getApplicationContext(), 40)).setDuration(500);
             //expandButton.animate().rotation(90).setDuration(2000);
 
             recyclerView.postDelayed(new Runnable() {
@@ -497,11 +518,11 @@ public class WorkoutActivity extends AppCompatActivity {
                     expandState = false;
                     adapter = new workoutAdapter(getApplicationContext(), workouts, email, date, recyclerView, expandButton, recyclerHeight, finalPBs, expandType, clickBlocker);
                     recyclerView.setAdapter(adapter);
-                    recyclerView.animate().y(recyclerHeight).setDuration(1000);
-                    expandButton.animate().y(expandButtonHeight).setDuration(1000);
-                    expandButton.animate().rotation(90).setDuration(1000);
+                    recyclerView.animate().y(recyclerHeight).setDuration(500);
+                    expandButton.animate().y(expandButtonHeight).setDuration(500);
+                    expandButton.animate().rotation(90).setDuration(500);
                 }
-            }, 1000);
+            }, 500);
 
         }
 

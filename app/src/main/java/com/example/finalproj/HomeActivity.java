@@ -41,6 +41,7 @@ public class HomeActivity extends AppCompatActivity {
 
         nameTag.setText(name);
         weightTag.setText(weight+ " Kg");
+
     }
 
     @Override

@@ -18,7 +18,7 @@ public class ClientHandler {
             throw new RuntimeException(e);
         }
 
-        returnMessage = myClient.getReturnString().substring(1);
+        returnMessage = myClient.getReturnString();
     }
 
     public String getReturnMessage() {

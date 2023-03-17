@@ -43,11 +43,10 @@ class MyClient implements Runnable{
                         new BufferedReader(
                                 new InputStreamReader(s.getInputStream()));
         ) {
-            for (int i = 0; i < 3; i++) {
-                out.println(toSend);
-                returnS = in.readLine();
-            }
-            returnString = returnS;
+            out.println(toSend);
+            returnString = in.readLine();
+
+            //returnString = returnS;
             s.close();
 
 
