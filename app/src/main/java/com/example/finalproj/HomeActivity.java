@@ -44,6 +44,12 @@ public class HomeActivity extends AppCompatActivity {
 
     }
 
+    public void openMacros(View view){
+        Intent myInt = new Intent(getApplicationContext(), MacrosActivity.class);
+        startActivity(myInt);
+        overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
+    }
+
     @Override
     public void onBackPressed() {
         Toast.makeText(getApplicationContext(),"back",Toast.LENGTH_SHORT).show();

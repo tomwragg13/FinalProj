@@ -15,6 +15,9 @@
         android:theme="@style/Theme.AppCompat.NoActionBar"
         tools:targetApi="31">
         <activity
+            android:name=".MacrosActivity"
+            android:exported="false" />
+        <activity
             android:name=".WorkoutActivity"
             android:exported="false" />
         <activity
