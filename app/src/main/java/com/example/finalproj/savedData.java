@@ -159,6 +159,7 @@ public class savedData {
         ClientHandler client = new ClientHandler("workoutData," + email + "," + date + "," + workoutData);
     }
 
+
     public static void changeRecyclerSize(Context context, List<Workouts> workouts, RecyclerView recyclerView){
         final float scale = context.getResources().getDisplayMetrics().density;
         int pixels = (int) (75 * scale + 0.5f);

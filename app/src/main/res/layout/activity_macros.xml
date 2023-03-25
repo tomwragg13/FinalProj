@@ -71,6 +71,38 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
+            <ImageView
+                android:id="@+id/imageView11"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginStart="32dp"
+                android:onClick="nextButton"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/macrosDate"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/forwards" />
+
+            <ImageView
+                android:id="@+id/imageView10"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginEnd="32dp"
+                android:clickable="false"
+                android:onClick="backButton"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/macrosDate"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/backwards" />
+
+            <TextView
+                android:id="@+id/macrosDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TextView"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -83,16 +115,17 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/button3"
+        android:id="@+id/foodButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
+        android:onClick="createFood"
         android:text="Create"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/editTextTextPersonName4" />
+        app:layout_constraintTop_toTopOf="@+id/macrosWeight" />
 
     <EditText
-        android:id="@+id/editTextTextPersonName"
+        android:id="@+id/macrosName"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
         android:layout_marginStart="100dp"
@@ -100,54 +133,54 @@
         android:ems="10"
         android:hint="Name"
         android:inputType="textPersonName"
-        app:layout_constraintEnd_toStartOf="@+id/button3"
+        app:layout_constraintEnd_toStartOf="@+id/foodButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout8" />
 
     <EditText
-        android:id="@+id/editTextTextPersonName2"
+        android:id="@+id/macrosCalories"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
         android:layout_marginTop="16dp"
         android:ems="10"
         android:hint="Calories"
         android:inputType="textPersonName"
-        app:layout_constraintStart_toStartOf="@+id/editTextTextPersonName"
-        app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName" />
+        app:layout_constraintStart_toStartOf="@+id/macrosName"
+        app:layout_constraintTop_toBottomOf="@+id/macrosName" />
 
     <EditText
-        android:id="@+id/editTextTextPersonName3"
+        android:id="@+id/macrosProtein"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
         android:layout_marginTop="16dp"
         android:ems="10"
         android:hint="Protein"
         android:inputType="textPersonName"
-        app:layout_constraintStart_toStartOf="@+id/editTextTextPersonName2"
-        app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName2" />
+        app:layout_constraintStart_toStartOf="@+id/macrosCalories"
+        app:layout_constraintTop_toBottomOf="@+id/macrosCalories" />
 
     <EditText
-        android:id="@+id/editTextTextPersonName4"
+        android:id="@+id/macrosWeight"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
         android:layout_marginTop="16dp"
         android:ems="10"
         android:hint="Weight"
         android:inputType="textPersonName"
-        app:layout_constraintStart_toStartOf="@+id/editTextTextPersonName3"
-        app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName3" />
+        app:layout_constraintStart_toStartOf="@+id/macrosProtein"
+        app:layout_constraintTop_toBottomOf="@+id/macrosProtein" />
 
     <Spinner
         android:id="@+id/spinner"
         android:layout_width="0dp"
         android:layout_height="48dp"
         android:layout_marginTop="32dp"
-        app:layout_constraintEnd_toEndOf="@+id/editTextTextPersonName3"
-        app:layout_constraintStart_toStartOf="@+id/editTextTextPersonName4"
-        app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName4" />
+        app:layout_constraintEnd_toEndOf="@+id/macrosProtein"
+        app:layout_constraintStart_toStartOf="@+id/macrosWeight"
+        app:layout_constraintTop_toBottomOf="@+id/macrosWeight" />
 
     <EditText
-        android:id="@+id/editTextTextPersonName5"
+        android:id="@+id/macrosWeight2"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
         android:layout_marginTop="16dp"
@@ -162,7 +195,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
+        android:onClick="addFood"
         android:text="Add"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/editTextTextPersonName5" />
+        app:layout_constraintTop_toTopOf="@+id/macrosWeight2" />
 </androidx.constraintlayout.widget.ConstraintLayout>

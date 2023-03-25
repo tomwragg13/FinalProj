@@ -447,7 +447,7 @@ public class WorkoutActivity extends AppCompatActivity {
         }
 
         workouts.add(0,new Workouts(workoutSpinner.getSelectedItem().toString(), Integer.parseInt(enterReps.getText().toString()), Integer.parseInt(enterWeight.getText().toString()), Integer.parseInt(enterSets.getText().toString()), weight, date));
-        savedData.saveChanges(email, date, workouts);
+
         adapter.notifyItemInserted(0);
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -455,7 +455,9 @@ public class WorkoutActivity extends AppCompatActivity {
         adapter = new workoutAdapter(getApplicationContext(), workouts, email, date, recyclerView, expandButton, recyclerHeight, finalPBs, expandType, clickBlocker);
         recyclerView.setAdapter(adapter);
 
-        loadWorkouts();
+
+        savedData.saveChanges(email, date, workouts);
+        //loadWorkouts();
 
 
 
