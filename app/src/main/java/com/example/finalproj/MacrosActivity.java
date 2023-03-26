@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 public class MacrosActivity extends AppCompatActivity {
 
@@ -65,19 +66,45 @@ public class MacrosActivity extends AppCompatActivity {
         foodNames = new ArrayList<>();
         foodNames.add("Select Food");
         loadSpinner();
+        foodRead();
 
-        foodProduct pringles = new foodProduct("Pringles", 154, 1.7, 30);
-        productManager Pringles = new productManager("Pringles", pringles, 30);
-        productManager Pringles2 = new productManager("Pringles", pringles, 600);
+        //foodProduct pringles = new foodProduct("Pringles", 154, 1.7, 30);
+        //productManager Pringles = new productManager("Pringles", pringles, 30, date);
+        //productManager Pringles2 = new productManager("Pringles", pringles, 600, date);
 
-        food.add(Pringles);
+        //food.add(Pringles);
 
-        Log.d("Pringles", String.valueOf(Pringles.getTotalCalories()));
-        Log.d("Pringles", String.valueOf(Pringles2.getTotalCalories()));
+        //Log.d("Pringles", String.valueOf(Pringles.getTotalCalories()));
+        //Log.d("Pringles", String.valueOf(Pringles2.getTotalCalories()));
 
         mealRecycler.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
 
         adapter = new mealAdapter(getApplicationContext(), food);
+        mealRecycler.setAdapter(adapter);
+
+
+    }
+
+    private void foodRead() {
+        ClientHandler clientHandler = new ClientHandler("foodRead," + email+ "," + date);
+        Log.d("foodRet", clientHandler.getReturnMessage());
+
+        String str = clientHandler.getReturnMessage();
+        String[] strArray = str.split(",");
+        List<String> list = new ArrayList<>(Arrays.asList(strArray));
+        list.remove(0);
+
+        ArrayList<productManager> foodToAdd = new ArrayList<>();
+        for (int i = 0; i < list.size(); i = i+4) {
+            for (int j = 0; j < foodItemList.size(); j++){
+                if(Objects.equals(foodItemList.get(j).getName(), list.get(i))){
+                    foodToAdd.add(new productManager(list.get(i), foodItemList.get(j), Integer.parseInt(list.get(i+3)), date));
+                }
+            }
+
+        }
+        mealRecycler.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        adapter = new mealAdapter(getApplicationContext(), foodToAdd);
         mealRecycler.setAdapter(adapter);
 
 
@@ -92,7 +119,7 @@ public class MacrosActivity extends AppCompatActivity {
 
         //foodItemList = new ArrayList<>();
         //foodNames = new ArrayList<>();
-        Log.d("l", String.valueOf(messageData[8]));
+        //Log.d("l", String.valueOf(messageData[8]));
         String[] maessageDataCPy = Arrays.copyOf(messageData, messageData.length-1);
         messageData = maessageDataCPy;
 
@@ -102,7 +129,7 @@ public class MacrosActivity extends AppCompatActivity {
             foodItemList.add(foodItem);
         }
 
-        Log.d("q", String.valueOf(foodItemList.get(1).getName()));
+        //Log.d("q", String.valueOf(foodItemList.get(1).getName()));
 
         for (foodProduct foodItem : foodItemList) {
             foodNames.add(foodItem.getName());
@@ -139,7 +166,7 @@ public class MacrosActivity extends AppCompatActivity {
         for (foodProduct obj : foodItemList) {
             if (obj.getName().equals(foodSpinner.getSelectedItem().toString())) {
 
-                productManager foods = new productManager(foodSpinner.getSelectedItem().toString(), obj, Integer.parseInt(macrosWeight2.getText().toString()));
+                productManager foods = new productManager(foodSpinner.getSelectedItem().toString(), obj, Integer.parseInt(macrosWeight2.getText().toString()), date);
                 food.add(foods);
 
 
@@ -150,14 +177,16 @@ public class MacrosActivity extends AppCompatActivity {
 
                 String namesString = "";
                 for (int i = 0; i < food.size(); i++) {
-                    String name = food.get(i).getName();
-                    double calories = food.get(i).getTotalCalories();
-                    double protein = food.get(i).getTotalProtein();
-                    int portion = food.get(i).getPortion();
-                    namesString += name + ",";
-                    namesString += calories + ",";
-                    namesString += protein + ",";
-                    namesString += portion + ",";
+                    if(Objects.equals(food.get(i).getDate(), date)){
+                        String name = food.get(i).getName();
+                        double calories = food.get(i).getTotalCalories();
+                        double protein = food.get(i).getTotalProtein();
+                        int portion = food.get(i).getPortion();
+                        namesString += name + ",";
+                        namesString += calories + ",";
+                        namesString += protein + ",";
+                        namesString += portion + ",";
+                    }
                 }
 
                 Log.d("names", namesString);
@@ -187,11 +216,13 @@ public class MacrosActivity extends AppCompatActivity {
         String[] dateData = DateHandler.getDate( "next", date);
         date = dateData[0];
         dateText.setText(dateData[1]);
+        foodRead();
     }
 
     public void backButton(View view){
         String[] dateData = DateHandler.getDate( "back", date);
         date = dateData[0];
         dateText.setText(dateData[1]);
+        foodRead();
     }
 }
