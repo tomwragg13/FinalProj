@@ -9,4 +9,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="bggblack">#121212</color>
     <color name="purple">#AB49FD</color>
+    <color name="appblue">#2E94FF</color>
+    <color name="apppurple">#0B0452</color>
 </resources>
