@@ -1,9 +1,12 @@
 package com.example.finalproj;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.loader.content.Loader;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.Intent;
 import android.icu.text.SimpleDateFormat;
 import android.os.Bundle;
@@ -11,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,7 +42,11 @@ public class MacrosActivity extends AppCompatActivity {
     List<String> foodNames;
     List<foodProduct> foodItemList = new ArrayList<>();
     List<productManager> food = new ArrayList<>();
+    boolean expandState = false;
 
+    ImageView expandButton2;
+
+    ConstraintLayout recyclerHeader;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,8 +63,13 @@ public class MacrosActivity extends AppCompatActivity {
         macrosProtein = (EditText) findViewById(R.id.macrosProtein);
         macrosWeight = (EditText) findViewById(R.id.macrosWeight);
         macrosWeight2 = (EditText) findViewById(R.id.macrosWeight2);
+        expandButton2 = (ImageView) findViewById(R.id.expandButton2);
+
 
         foodSpinner = (Spinner) findViewById(R.id.spinner);
+        recyclerHeader = (ConstraintLayout) findViewById(R.id.recyclerHeader);
+
+        expandButton2.setElevation(1000);
 
         SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
         date = sdf.format(new Date());
@@ -67,6 +80,7 @@ public class MacrosActivity extends AppCompatActivity {
         foodNames.add("Select Food");
         loadSpinner();
         foodRead();
+        addIfEmpty();
 
         //foodProduct pringles = new foodProduct("Pringles", 154, 1.7, 30);
         //productManager Pringles = new productManager("Pringles", pringles, 30, date);
@@ -77,12 +91,55 @@ public class MacrosActivity extends AppCompatActivity {
         //Log.d("Pringles", String.valueOf(Pringles.getTotalCalories()));
         //Log.d("Pringles", String.valueOf(Pringles2.getTotalCalories()));
 
-        mealRecycler.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        //mealRecycler.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
 
-        adapter = new mealAdapter(getApplicationContext(), food);
-        mealRecycler.setAdapter(adapter);
+        //addIfEmpty();
+        //adapter = new mealAdapter(getApplicationContext(), food);
+        //mealRecycler.setAdapter(adapter);
 
 
+    }
+
+    public static float pxFromDp(final Context context, final float dp) {
+        return dp * context.getResources().getDisplayMetrics().density;
+    }
+
+    public void openFood(View view){
+        expandFood();
+    }
+
+    public void expandFood(){
+
+        if(!Objects.equals(food.get(0).getName(), "Add Food To Track Macros")){
+            float px = 0;
+            if(!expandState){
+                px = pxFromDp(getApplicationContext(), -(75*food.size()-75));
+                recyclerHeader.animate().translationYBy(px).setDuration(500);
+                mealRecycler.animate().translationYBy(px).setDuration(500);
+                expandButton2.animate().translationYBy(px).setDuration(500);
+                expandButton2.animate().rotation(90);
+                expandState = true;
+            }else {
+                px = pxFromDp(getApplicationContext(), (75*food.size()-75));
+                recyclerHeader.animate().translationYBy(px).setDuration(500);
+                mealRecycler.animate().translationYBy(px).setDuration(500);
+                expandButton2.animate().translationYBy(px).setDuration(500);
+                expandButton2.animate().rotation(-90);
+                expandState = false;
+            }
+        }
+    }
+
+    public void addIfEmpty(){
+        if(food.size() == 0){
+
+            foodProduct pringles = new foodProduct("Add Food To Track Macros", 1, 1, 1);
+            food.add(new productManager("Add Food To Track Macros", pringles, 1, date));
+
+            mealRecycler.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+            adapter = new mealAdapter(getApplicationContext(), food);
+            mealRecycler.setAdapter(adapter);
+        }
     }
 
     private void foodRead() {
@@ -103,9 +160,24 @@ public class MacrosActivity extends AppCompatActivity {
             }
 
         }
+
+        food = foodToAdd;
+        //Log.d("oo", food.get(2).getName());
+
         mealRecycler.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        adapter = new mealAdapter(getApplicationContext(), foodToAdd);
+        adapter = new mealAdapter(getApplicationContext(), food);
         mealRecycler.setAdapter(adapter);
+
+
+
+        Log.d("size", String.valueOf(food.size()));
+        if(food.size() == 0){
+            expandButton2.setVisibility(View.GONE);
+        }else{
+            expandButton2.setVisibility(View.VISIBLE);
+        }
+        //addIfEmpty();
+
 
 
     }
@@ -169,6 +241,10 @@ public class MacrosActivity extends AppCompatActivity {
                 productManager foods = new productManager(foodSpinner.getSelectedItem().toString(), obj, Integer.parseInt(macrosWeight2.getText().toString()), date);
                 food.add(foods);
 
+                if(Objects.equals(food.get(0).getName(), "Add Food To Track Macros")){
+                    food.remove(0);
+                }
+
 
 
                 mealRecycler.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
@@ -196,6 +272,7 @@ public class MacrosActivity extends AppCompatActivity {
                 break;
             }
         }
+        foodRead();
 
 
     }
@@ -217,6 +294,7 @@ public class MacrosActivity extends AppCompatActivity {
         date = dateData[0];
         dateText.setText(dateData[1]);
         foodRead();
+        addIfEmpty();
     }
 
     public void backButton(View view){
@@ -224,5 +302,6 @@ public class MacrosActivity extends AppCompatActivity {
         date = dateData[0];
         dateText.setText(dateData[1]);
         foodRead();
+        addIfEmpty();
     }
 }

@@ -38,8 +38,8 @@ public class mealAdapter extends RecyclerView.Adapter<mealViewHolder> {
         //holder.weightView.setText((Integer.toString(items.get(position).getWeight()))+" Kg");
         //holder.dateView.setText(output.toString());
         holder.nameView.setText(food.get(position).getName());
-        holder.mealCalories.setText(Integer.toString( (int )food.get(position).getTotalCalories()));
-        holder.mealProtein.setText(Double.toString(food.get(position).getTotalProtein()));
+        holder.mealCalories.setText(Integer.toString( (int )food.get(position).getTotalCalories()) + "cal");
+        holder.mealProtein.setText("Protein: " + (Double.toString(food.get(position).getTotalProtein())) + "g");
     }
 
     @Override

@@ -116,7 +116,7 @@ public class WorkoutActivity extends AppCompatActivity {
                 headerHeight = recyclerHeader.getY();
 
                 Log.d("PanelH", String.valueOf(mainPanelHeight));
-                savedData.addIfEmpty(recyclerView, getApplicationContext(), workouts, email, date, expandButton, recyclerHeight, finalPBs, expandType, clickBlocker);
+                savedData.addIfEmpty(recyclerView, getApplicationContext(), workouts, email, date, expandButton, recyclerHeight, finalPBs, expandType, clickBlocker, recyclerHeader);
 
                 // Don't forget to remove your listener when you are done with it.
                 recyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
@@ -205,7 +205,7 @@ public class WorkoutActivity extends AppCompatActivity {
             recyclerView = findViewById(R.id.recyclerView);
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-            adapter = new workoutAdapter(getApplicationContext(), workouts, email, date, recyclerView, expandButton, recyclerHeight, finalPBs, expandType, clickBlocker);
+            adapter = new workoutAdapter(getApplicationContext(), workouts, email, date, recyclerView, expandButton, recyclerHeight, finalPBs, expandType, clickBlocker, recyclerHeader);
             recyclerView.setAdapter(adapter);
 
             expandType = "workouts";
@@ -421,7 +421,7 @@ public class WorkoutActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         //expandType = "workouts";
-        adapter = new workoutAdapter(getApplicationContext(), workouts, email, date, recyclerView, expandButton, recyclerHeight, finalPBs, expandType, clickBlocker);
+        adapter = new workoutAdapter(getApplicationContext(), workouts, email, date, recyclerView, expandButton, recyclerHeight, finalPBs, expandType, clickBlocker, recyclerHeader);
         recyclerView.setAdapter(adapter);
 
         Log.d("size", String.valueOf(workouts.size()));
@@ -460,11 +460,12 @@ public class WorkoutActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        adapter = new workoutAdapter(getApplicationContext(), workouts, email, date, recyclerView, expandButton, recyclerHeight, finalPBs, expandType, clickBlocker);
+        adapter = new workoutAdapter(getApplicationContext(), workouts, email, date, recyclerView, expandButton, recyclerHeight, finalPBs, expandType, clickBlocker, recyclerHeader);
         recyclerView.setAdapter(adapter);
 
 
         savedData.saveChanges(email, date, workouts);
+        expanderToggle();
         //loadWorkouts();
 
 
@@ -482,7 +483,7 @@ public class WorkoutActivity extends AppCompatActivity {
 
 
 
-        savedData.addIfEmpty(recyclerView, getApplicationContext(), workouts, email, date, expandButton, recyclerHeight, finalPBs, expandType, clickBlocker);
+        savedData.addIfEmpty(recyclerView, getApplicationContext(), workouts, email, date, expandButton, recyclerHeight, finalPBs, expandType, clickBlocker, recyclerHeader);
 
     }
 
@@ -493,7 +494,7 @@ public class WorkoutActivity extends AppCompatActivity {
         loadWorkouts();
         closeRecycler();
 
-        savedData.addIfEmpty(recyclerView, getApplicationContext(), workouts, email, date, expandButton, recyclerHeight, finalPBs, expandType, clickBlocker);
+        savedData.addIfEmpty(recyclerView, getApplicationContext(), workouts, email, date, expandButton, recyclerHeight, finalPBs, expandType, clickBlocker, recyclerHeader);
     }
 
     public void closeRecycler(){
@@ -509,7 +510,7 @@ public class WorkoutActivity extends AppCompatActivity {
             recyclerView = findViewById(R.id.recyclerView);
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-            adapter = new workoutAdapter(getApplicationContext(), workouts, email, date, recyclerView, expandButton, recyclerHeight, finalPBs, expandType, clickBlocker);
+            adapter = new workoutAdapter(getApplicationContext(), workouts, email, date, recyclerView, expandButton, recyclerHeight, finalPBs, expandType, clickBlocker, recyclerHeader);
             recyclerView.setAdapter(adapter);
         }
         if(Objects.equals(expandType, "PB")){
@@ -528,7 +529,7 @@ public class WorkoutActivity extends AppCompatActivity {
                     recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
 
                     expandState = false;
-                    adapter = new workoutAdapter(getApplicationContext(), workouts, email, date, recyclerView, expandButton, recyclerHeight, finalPBs, expandType, clickBlocker);
+                    adapter = new workoutAdapter(getApplicationContext(), workouts, email, date, recyclerView, expandButton, recyclerHeight, finalPBs, expandType, clickBlocker, recyclerHeader);
                     recyclerView.setAdapter(adapter);
                     recyclerView.animate().y(recyclerHeight).setDuration(500);
                     recyclerHeader.animate().y(headerHeight).setDuration(500);

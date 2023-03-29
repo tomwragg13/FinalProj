@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg1"
+    android:background="#EEF3F9"
     tools:context=".MainActivity">
 
     <TextView
@@ -21,7 +21,6 @@
         android:id="@+id/registerbutton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/purple"
         android:onClick="checkSignup"
         android:text="Sign Up"
         app:layout_constraintBottom_toTopOf="@+id/swapToLoginButton"
@@ -44,8 +43,9 @@
         android:id="@+id/constraintLayout2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="75dp"
-        android:layout_marginEnd="75dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/shadow"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.49"
@@ -54,7 +54,7 @@
 
         <EditText
             android:id="@+id/createEmail"
-            android:layout_width="0dp"
+            android:layout_width="210dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
             android:backgroundTint="@color/purple"
@@ -69,52 +69,52 @@
 
         <EditText
             android:id="@+id/createFirstName"
-            android:layout_width="0dp"
+            android:layout_width="97dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
+            android:layout_marginTop="8dp"
             android:backgroundTint="@color/purple"
             android:ems="10"
             android:gravity="center"
             android:hint="First Name"
             android:inputType="textPersonName"
             android:minHeight="48dp"
-            app:layout_constraintEnd_toStartOf="@+id/createSecondName"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/createEmail"
             app:layout_constraintTop_toTopOf="parent" />
 
         <EditText
             android:id="@+id/createSecondName"
-            android:layout_width="0dp"
+            android:layout_width="97dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="16dp"
             android:backgroundTint="@color/purple"
             android:ems="10"
             android:gravity="center"
             android:hint="Second Name"
             android:inputType="textPersonName"
             android:minHeight="48dp"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/createFirstName"
             app:layout_constraintTop_toTopOf="@+id/createFirstName" />
 
         <EditText
             android:id="@+id/createConfirmPassword"
-            android:layout_width="0dp"
+            android:layout_width="210dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
+            android:layout_marginBottom="8dp"
             android:backgroundTint="@color/purple"
-            android:gravity="center"
             android:ems="10"
+            android:gravity="center"
             android:hint="Confirm Password"
             android:inputType="textPassword"
             android:minHeight="48dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/createPassword" />
 
         <EditText
             android:id="@+id/createPassword"
-            android:layout_width="0dp"
+            android:layout_width="210dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
             android:backgroundTint="@color/purple"
@@ -159,7 +159,6 @@
         android:id="@+id/swapToLoginButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/purple"
         android:onClick="swapToSignIn"
         android:text="Sign In"
         app:layout_constraintBottom_toBottomOf="parent"

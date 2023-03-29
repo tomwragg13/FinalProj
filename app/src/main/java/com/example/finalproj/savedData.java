@@ -160,25 +160,11 @@ public class savedData {
     }
 
 
-    public static void changeRecyclerSize(Context context, List<Workouts> workouts, RecyclerView recyclerView){
-        final float scale = context.getResources().getDisplayMetrics().density;
-        int pixels = (int) (75 * scale + 0.5f);
-        if(workouts.size() < 6 && workouts.size() > 0){
-            recyclerView.getLayoutParams().height = workouts.size()*pixels;
-        }
-        if(workouts.size() == 0){
-            recyclerView.getLayoutParams().height = pixels;
-        }
-        if(workouts.size() > 5){
-            recyclerView.getLayoutParams().height = 5*pixels;
-        }
-    }
-
     public static void addIfEmpty(RecyclerView recyclerView, Context context, List<Workouts> workouts, String email, String date, ImageView expandButton, float recyclerHeight,
-                                  List<personalBests> PBs, String expandType, ConstraintLayout clickBlocker) {
+                                  List<personalBests> PBs, String expandType, ConstraintLayout clickBlocker, ConstraintLayout recyclerHeader) {
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
 
-        workoutAdapter adapter = new workoutAdapter(context, workouts, email, date, recyclerView, expandButton, recyclerHeight, PBs, expandType, clickBlocker);
+        workoutAdapter adapter = new workoutAdapter(context, workouts, email, date, recyclerView, expandButton, recyclerHeight, PBs, expandType, clickBlocker, recyclerHeader);
         recyclerView.setAdapter(adapter);
         if(workouts.size() == 0){
 

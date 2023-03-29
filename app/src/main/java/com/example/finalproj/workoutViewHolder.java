@@ -32,7 +32,7 @@ public class workoutViewHolder extends RecyclerView.ViewHolder {
     boolean expandButtonView = true;
 
     public workoutViewHolder(@NonNull View itemView, String email, String date, List<Workouts> workouts, Context context, RecyclerView recyclerView, ImageView expandButton, float recyclerHeight,
-                             String expandType, List<personalBests> finalPBs, ConstraintLayout clickBlocker) {
+                             String expandType, List<personalBests> finalPBs, ConstraintLayout clickBlocker, ConstraintLayout recyclerHeader) {
         super(itemView);
         Log.d("AIE", String.valueOf(recyclerHeight));
 
@@ -48,7 +48,7 @@ public class workoutViewHolder extends RecyclerView.ViewHolder {
             adapter.notifyItemRemoved(getAdapterPosition());
             savedData.saveChanges(email, date, workouts);
             //savedData.changeRecyclerSize(context, items, recyclerView);
-            savedData.addIfEmpty(recyclerView, context, workouts, email, date, expandButton, recyclerHeight, finalPBs, expandType, clickBlocker);
+            savedData.addIfEmpty(recyclerView, context, workouts, email, date, expandButton, recyclerHeight, finalPBs, expandType, clickBlocker, recyclerHeader);
             //recyclerView.animate().translationY(0).setDuration(1000);
 
             Log.d("l1", String.valueOf(recyclerHeight));
@@ -56,6 +56,7 @@ public class workoutViewHolder extends RecyclerView.ViewHolder {
             if(workouts.size() <5 && workouts.size() > 0 && recyclerView.getY() != recyclerHeight){
                 recyclerView.animate().translationYBy(pxFromDp(context, 75));
                 expandButton.animate().translationYBy(pxFromDp(context, 75));
+                recyclerHeader.animate().translationYBy(pxFromDp(context, 75));
             }
 
             if(workouts.size() == 1 ){

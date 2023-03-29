@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LoginActivity"
-    android:background="@drawable/bg1">
+    android:background="#EEF3F9"
+    tools:context=".LoginActivity">
 
 
     <ImageView
@@ -42,7 +42,6 @@
         android:id="@+id/registerbutton2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/purple"
         android:onClick="openSignUp"
         android:text="Sign Up"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -54,7 +53,6 @@
         android:id="@+id/swapToLoginButton2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/purple"
         android:onClick="signInButton"
         android:text="Sign In"
         app:layout_constraintBottom_toTopOf="@+id/registerbutton2"
@@ -66,8 +64,9 @@
         android:id="@+id/constraintLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="75dp"
-        android:layout_marginEnd="75dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/shadow"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -75,15 +74,16 @@
 
         <EditText
             android:id="@+id/emailLogin"
-            android:layout_width="0dp"
+            android:layout_width="210dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="80dp"
-            android:backgroundTint="@color/purple"
+            android:layout_marginTop="88dp"
             android:ems="10"
             android:gravity="center"
             android:hint="Email Address"
             android:inputType="textPersonName"
             android:minHeight="48dp"
+            android:textColor="#0B0452"
+            android:textColorHint="#6F6C8A"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -91,16 +91,17 @@
 
         <EditText
             android:id="@+id/passwordLogin"
-            android:layout_width="0dp"
+            android:layout_width="210dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
-            android:layout_marginBottom="80dp"
-            android:backgroundTint="@color/purple"
+            android:layout_marginBottom="88dp"
             android:ems="10"
             android:gravity="center"
             android:hint="Password"
             android:inputType="textPassword"
             android:minHeight="48dp"
+            android:textColor="#0B0452"
+            android:textColorHint="#6F6C8A"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -115,7 +116,6 @@
             android:onClick="onSwitchClick"
             android:showText="false"
             android:splitTrack="false"
-            android:thumbTint="@color/purple"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/confirmRemember"
             app:layout_constraintStart_toStartOf="parent"

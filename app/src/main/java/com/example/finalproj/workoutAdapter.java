@@ -16,7 +16,7 @@ import java.util.List;
 public class workoutAdapter extends RecyclerView.Adapter<workoutViewHolder> {
 
     public workoutAdapter(Context context, List<Workouts> items, String email, String date, RecyclerView recyclerView, ImageView expandButton, float recyclerHeight,
-                          List<personalBests> PBs, String expandType, ConstraintLayout clickBlocker) {
+                          List<personalBests> PBs, String expandType, ConstraintLayout clickBlocker, ConstraintLayout recyclerHeader) {
         this.context = context;
         this.items = items;
         this.email = email;
@@ -27,6 +27,7 @@ public class workoutAdapter extends RecyclerView.Adapter<workoutViewHolder> {
         this.PBs = PBs;
         this.expandType = expandType;
         this.clickBlocker = clickBlocker;
+        this.recyclerHeader = recyclerHeader;
     }
 
     Context context;
@@ -41,14 +42,14 @@ public class workoutAdapter extends RecyclerView.Adapter<workoutViewHolder> {
 
     float recyclerHeight;
 
-    ConstraintLayout clickBlocker;
+    ConstraintLayout clickBlocker, recyclerHeader;
 
 
     @NonNull
     @Override
     public workoutViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return new workoutViewHolder(LayoutInflater.from(context).inflate(R.layout.workout_item,parent,false), email, date, items, context,
-                recyclerView, expandButton, recyclerHeight, expandType, PBs, clickBlocker).linkAdapter(this);
+                recyclerView, expandButton, recyclerHeight, expandType, PBs, clickBlocker, recyclerHeader).linkAdapter(this);
     }
 
     @Override
@@ -57,7 +58,7 @@ public class workoutAdapter extends RecyclerView.Adapter<workoutViewHolder> {
         holder.repsView.setText("Reps: x"+(Integer.toString(items.get(position).getReps())));
         holder.weightView.setText((Integer.toString(items.get(position).getWeight()))+" Kg");
         holder.setsView.setText("Sets: x"+(Integer.toString(items.get(position).getSets())));
-        holder.caloriesView.setText("-"+(Integer.toString((int) items.get(position).getCalories()))+" kcal");
+        holder.caloriesView.setText("-"+(Integer.toString((int) items.get(position).getCalories()))+"cal");
     }
 
     @Override
