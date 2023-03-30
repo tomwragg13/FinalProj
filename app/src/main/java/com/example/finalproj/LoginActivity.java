@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class LoginActivity extends AppCompatActivity {
@@ -78,6 +79,18 @@ public class LoginActivity extends AppCompatActivity {
 
                 savedData.writeStoredEmail(getApplicationContext(),emailLogin.getText().toString().getBytes());
                 savedData.writeNameWeight(getApplicationContext(), emailLogin.getText().toString().getBytes());
+
+                ClientHandler client = new ClientHandler("returnTargets," + emailLogin.getText().toString());
+                String[] arr = client.getReturnMessage().split(",");
+                ArrayList<String> list = new ArrayList<>();
+
+                for (String s : arr) {
+                    list.add(s);
+                }
+
+                //Log.d("prot", list.get(1));
+                savedData.writeStoredProtein(getApplicationContext(), list.get(0).getBytes());
+                savedData.writeStoredCalories(getApplicationContext(), list.get(1).getBytes());
 
                 Intent myInt = new Intent(getApplicationContext(), HomeActivity.class);
                 startActivity(myInt);

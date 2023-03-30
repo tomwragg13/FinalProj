@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
 
-        ClientHandler client = new ClientHandler("userData,tom5,tom6," + savedEmail + ",pass,10");
+        ClientHandler client = new ClientHandler("userData,tom5,tom6," + savedEmail + ",pass,70");
         String isTaken = client.getReturnMessage();
         String[] isTakenData = isTaken.split(",", -1);
         String storedOldEmail = isTakenData[1];
@@ -192,6 +192,14 @@ public class MainActivity extends AppCompatActivity {
                 ClientHandler client = new ClientHandler(userDataMessage);
                 Log.d("app", client.getReturnMessage());
                 manageErrors(client.getReturnMessage());
+
+                ClientHandler clientHandler = new ClientHandler("updateProtein," + email+ ",100");
+                Toast.makeText(getApplicationContext(),"Protein Target Updated",Toast.LENGTH_SHORT).show();
+                savedData.writeStoredProtein(getApplicationContext(), "100".getBytes());
+
+                ClientHandler clientHandler1 = new ClientHandler("updateCalories," + email+ ",2000");
+                Toast.makeText(getApplicationContext(),"Calorie Target Updated",Toast.LENGTH_SHORT).show();
+                savedData.writeStoredCalories(getApplicationContext(), "2000".getBytes());
 
             }
         }

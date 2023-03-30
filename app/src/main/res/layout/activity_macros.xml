@@ -72,13 +72,13 @@
 
         <ImageView
             android:id="@+id/imageView12"
-            android:layout_width="30dp"
+            android:layout_width="39dp"
             android:layout_height="30dp"
             android:layout_marginEnd="8dp"
             app:layout_constraintBottom_toBottomOf="@+id/space"
             app:layout_constraintEnd_toStartOf="@+id/textView8"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ups" />
+            app:srcCompat="@drawable/newlogo" />
 
         <ImageView
             android:id="@+id/imageView4"
@@ -250,7 +250,7 @@
                     android:layout_marginTop="8dp"
                     android:ems="10"
                     android:hint="Calories"
-                    android:inputType="textPersonName"
+                    android:inputType="number|textPersonName"
                     android:textColor="#0B0452"
                     android:textColorHint="#6F6C8A"
                     app:layout_constraintStart_toStartOf="parent"
@@ -264,7 +264,7 @@
                     android:layout_marginTop="8dp"
                     android:ems="10"
                     android:hint="Protein"
-                    android:inputType="textPersonName"
+                    android:inputType="number|textPersonName"
                     android:textColor="#0B0452"
                     android:textColorHint="#6F6C8A"
                     app:layout_constraintStart_toStartOf="parent"
@@ -279,7 +279,7 @@
                     android:layout_marginBottom="8dp"
                     android:ems="10"
                     android:hint="Weight"
-                    android:inputType="textPersonName"
+                    android:inputType="number|textPersonName"
                     android:textColor="#0B0452"
                     android:textColorHint="#6F6C8A"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -341,7 +341,7 @@
                     android:layout_marginBottom="8dp"
                     android:ems="10"
                     android:hint="Portion"
-                    android:inputType="textPersonName"
+                    android:inputType="number|textPersonName"
                     android:textColor="#0B0452"
                     android:textColorHint="#6F6C8A"
                     app:layout_constraintBottom_toBottomOf="parent"

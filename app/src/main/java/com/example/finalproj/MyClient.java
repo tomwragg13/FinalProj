@@ -19,8 +19,8 @@ class MyClient implements Runnable{
 
 
     public MyClient(String toSend) {
-        this.server = "4.tcp.eu.ngrok.io";
-        this.port = 11826;
+        this.server = "192.168.0.104";
+        this.port = 1888;
         this.toSend = toSend;
     }
 

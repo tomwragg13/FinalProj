@@ -75,6 +75,60 @@ public class savedData {
         }
     }
 
+    public static String readStoredProtein(Context context) {
+        String storedProtein = null;
+        try {
+            FileInputStream inputStream = context.openFileInput("storedProtein1.txt"); // replace "filename.txt" with the name of the file where you stored the word
+            int length = inputStream.available();
+            byte[] buffer = new byte[length];
+            inputStream.read(buffer);
+            storedProtein = new String(buffer);
+            inputStream.close();
+
+            // do something with the word, for example, log it
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return storedProtein;
+    }
+
+    public static void writeStoredProtein(Context context, byte[] protein) {
+        try {
+            FileOutputStream outputStream = context.openFileOutput("storedProtein1.txt", Context.MODE_PRIVATE);
+            outputStream.write(protein);
+            outputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static String readStoredCalories(Context context) {
+        String storedCalories = null;
+        try {
+            FileInputStream inputStream = context.openFileInput("storedCalories1.txt"); // replace "filename.txt" with the name of the file where you stored the word
+            int length = inputStream.available();
+            byte[] buffer = new byte[length];
+            inputStream.read(buffer);
+            storedCalories = new String(buffer);
+            inputStream.close();
+
+            // do something with the word, for example, log it
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return storedCalories;
+    }
+
+    public static void writeStoredCalories(Context context, byte[] calories) {
+        try {
+            FileOutputStream outputStream = context.openFileOutput("storedCalories1.txt", Context.MODE_PRIVATE);
+            outputStream.write(calories);
+            outputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void writeNameWeight(Context context, byte[] email) {
         String em = new String(email, StandardCharsets.UTF_8);
         String name = fetchUserData(em)[0];

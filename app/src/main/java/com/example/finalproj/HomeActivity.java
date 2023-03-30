@@ -6,9 +6,11 @@ import android.icu.text.SimpleDateFormat;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 public class HomeActivity extends AppCompatActivity {
@@ -20,6 +22,7 @@ public class HomeActivity extends AppCompatActivity {
     int weight;
     String date;
     TextView dateText;
+    EditText weightText, caloriesText, proteinText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +36,13 @@ public class HomeActivity extends AppCompatActivity {
         nameTag = (TextView) findViewById(R.id.nameTag);
         weightTag = (TextView) findViewById(R.id.weightTag);
         dateText = (TextView) findViewById(R.id.dateTag);
+        weightText = findViewById(R.id.weightTextBox);
+        caloriesText = findViewById(R.id.caloriesText);
+        proteinText = findViewById(R.id.proteinText);
+
+        weightText.setText(String.valueOf(weight));
+        proteinText.setText(savedData.readStoredProtein(getApplicationContext()));
+        caloriesText.setText(savedData.readStoredCalories(getApplicationContext()));
 
         SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
         date = sdf.format(new Date());
@@ -44,6 +54,25 @@ public class HomeActivity extends AppCompatActivity {
 
     }
 
+    public void setProtein(View view){
+        ClientHandler clientHandler = new ClientHandler("updateProtein," + email+ "," + proteinText.getText().toString());
+        Toast.makeText(getApplicationContext(),"Protein Target Updated",Toast.LENGTH_SHORT).show();
+        savedData.writeStoredProtein(getApplicationContext(), proteinText.getText().toString().getBytes());
+    }
+    public void setCalories(View view){
+        ClientHandler clientHandler = new ClientHandler("updateCalories," + email+ "," + caloriesText.getText().toString());
+        Toast.makeText(getApplicationContext(),"Calorie Target Updated",Toast.LENGTH_SHORT).show();
+        savedData.writeStoredCalories(getApplicationContext(), caloriesText.getText().toString().getBytes());
+    }
+
+    public void setWeight(View view){
+        weightTag.setText(weightText.getText().toString() + " Kg");
+        ClientHandler clientHandler = new ClientHandler("updateWeight," + email+ "," + weightText.getText().toString());
+        savedData.writeNameWeight(getApplicationContext(), email.getBytes(StandardCharsets.UTF_8));
+        Toast.makeText(getApplicationContext(),"Weight Updated",Toast.LENGTH_SHORT).show();
+        weightText.setText("");
+    }
+
     public void openMacros(View view){
         Intent myInt = new Intent(getApplicationContext(), MacrosActivity.class);
         startActivity(myInt);
@@ -52,7 +81,10 @@ public class HomeActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        Toast.makeText(getApplicationContext(),"back",Toast.LENGTH_SHORT).show();
+        Intent startMain = new Intent(Intent.ACTION_MAIN);
+        startMain.addCategory(Intent.CATEGORY_HOME);
+        startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(startMain);
     }
 
     public void logOutAction(View view){

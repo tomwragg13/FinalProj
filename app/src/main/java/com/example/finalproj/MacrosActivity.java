@@ -62,7 +62,7 @@ public class MacrosActivity extends AppCompatActivity {
     TextView nameTag;
     TextView weightTag;
 
-    float calorieGoal = 1800f;
+    float calorieGoal = 2000f;
     float proteinGoal = 100f;
 
     private PieChart pieChart, pieChart2;
@@ -90,6 +90,11 @@ public class MacrosActivity extends AppCompatActivity {
 
         nameTag = (TextView) findViewById(R.id.nameTag);
         weightTag = (TextView) findViewById(R.id.weightTag);
+
+
+
+        calorieGoal = Float.parseFloat(savedData.readStoredCalories(getApplicationContext()));
+        proteinGoal = Float.parseFloat(savedData.readStoredProtein(getApplicationContext()));
 
         nameTag.setText(name);
         weightTag.setText(weight+ " Kg");
